@@ -1,0 +1,26 @@
+{
+  "cwd": "/workspace/recipto",
+  "type": [
+    "web",
+    "pwa",
+    "capacitor"
+  ],
+  "name": "Recipto",
+  "pkg": "com.luckyjtech.recipto",
+  "framework": "react",
+  "template": "split-view",
+  "cssPreProcessor": "scss",
+  "bundler": "vite",
+  "capacitor": {
+    "platforms": [
+      "android"
+    ]
+  },
+  "theming": {
+    "customColor": true,
+    "color": "#4caf50",
+    "darkMode": false,
+    "iconFonts": false
+  },
+  "customBuild": false
+}
