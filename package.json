@@ -8,6 +8,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "cross-env NODE_ENV=development vite",
+    "postinstall": "cpy --flat ./node_modules/material-symbols/*.{woff2,scss,css} ./src/fonts/",
     "build": "cross-env NODE_ENV=production vite build && npx workbox generateSW workbox-config.js",
     "build-capacitor-android": "cross-env NODE_ENV=production vite build && npx cap copy android"
   },
@@ -28,6 +29,7 @@
     "dom7": "^4.0.6",
     "framework7": "^8.0.5",
     "framework7-react": "^8.0.5",
+    "material-symbols": "^0.5.5",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -38,6 +40,7 @@
     "@capacitor/cli": "^5.0.4",
     "@vitejs/plugin-react": "^4.0.0",
     "cordova-res": "^0.15.4",
+    "cpy-cli": "^4.2.0",
     "cross-env": "^7.0.3",
     "postcss-preset-env": "^8.4.1",
     "sass": "^1.62.1",

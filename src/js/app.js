@@ -14,6 +14,7 @@ import 'framework7/css/bundle';
 // Import Icons and App Custom Styles
 
 import '../css/app.scss';
+import '../css/icons.css';
 
 // Import App Component
 import App from '../components/app.jsx';

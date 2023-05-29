@@ -40,7 +40,10 @@ const MyApp = () => {
       colors: {
         primary: '#4caf50',
       },
-
+      darkMode:'auto',
+popup:{
+closeByBackdropClick:false
+},
 
 
       // App store

@@ -1,0 +1,120 @@
+.rt-toolbar-wrap{
+    background:var(--f7-card-bg-color) ;
+    padding-right: 1rem;
+    display: flex;
+    gap: 1rem;
+    .rt-toolbar{
+        --f7-toolbar-bg-color:var(--f7-card-bg-color);
+    --f7-toolbar-text-color:var(--f7-md-primary);
+    --f7-tabbar-link-active-color:var(--f7-md-primary);;
+    
+    // background-color: var(--f7-tabbar-link-active-bg-color, transparent);
+    --f7-toolbar-font-size:20px;
+    height: var(--f7-toolbar-height);
+    background-color: var(--f7-toolbar-bg-color, var(--f7-bars-bg-color));
+    color: var(--f7-toolbar-text-color, var(--f7-bars-text-color));
+    .toolbar-inner{
+        max-width: 500px;
+gap:0.5rem;
+        .tab-link-highlight{
+            height: 4px!important;
+            border-radius: 1rem;
+            
+        }
+    }
+}
+
+}
+
+.rt-tab{
+    padding-bottom: 4rem;
+}
+.rt-card{
+}
+.rt-card-header-link{
+    color: inherit;
+    
+    border-radius: 8px!important;
+    
+}
+
+.rt-card-header-name{
+    margin-bottom: 0;
+    font-size: 1.1rem;
+}
+.rt-card-content{
+
+    .rt-card-content-inner{
+border-radius:8px;
+        position: relative;
+        background:rgba(var(--f7-theme-color-rgb),0.05);
+    }
+    .rt-card-content-title{
+        border-top: 1px solid #bbb;
+        padding: 0.75rem;
+font-size: 1.3rem;
+    }
+}
+.rt-card-img-wrap{
+    height: 250px;
+    border-top-left-radius:inherit;
+    border-top-right-radius: inherit;
+    overflow: hidden;
+    .rt-card-img{
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: left center;
+    }
+}
+
+.rt-card-footer{
+    border-top: 1px solid #ccc;
+    .button{
+        color: grey;
+    }
+}
+
+
+.rt-single-input-list{
+    
+    padding: 0;
+    padding-bottom: 1rem;
+margin-top: 0;
+width: 100%;
+background: var(--f7-card-bg-color);
+border-radius: var(--f7-card-border-radius);
+    .rt-input{
+    
+        margin: 0!important;
+      height: auto;
+        *::after{
+            display: none;
+        }
+        .item-inner{
+    
+        }
+        input{
+        font-size: 1.25rem;
+            height: 100%;
+            padding: 0.5rem 1rem;
+            border-radius: 40px;
+            border: 2px solid #ccc;
+            font-weight: 500;
+        }
+        .item-input-wrap{
+            height:4rem;
+        }
+    }
+}
+
+.rt-fab{
+    margin-bottom: 4rem;
+    margin-right: 1rem;
+}
+@media all and (max-width:568px){
+    .rt-card{
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+}
