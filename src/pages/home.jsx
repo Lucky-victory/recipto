@@ -219,11 +219,17 @@ const HomePage = () => {
                         />
                       )}
                     </div>
-
                     {post.has_recipe && (
+<div className="rt-card-content-footer">
+
+                      
                       <div className="rt-card-content-title">
                         <span className="text-bold">{post.recipe?.title}</span>
                       </div>
+                      <Link iconOnly>
+                        <Icon material="bookmark" className="material-symbols-rounded"/>
+                      </Link>
+</div>
                     )}
                   </Link>
                 </CardContent>

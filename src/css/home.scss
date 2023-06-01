@@ -28,7 +28,7 @@
 }
 
 .rt-tab {
-  padding-bottom: 4rem;
+  padding-bottom: 6rem;
 }
 .rt-card {
 }
@@ -54,10 +54,13 @@
     color: inherit;
     background: rgba(var(--f7-theme-color-rgb), 0.05);
   }
-  .rt-card-content-title {
+  .rt-card-content-footer {
     border-top: 1px solid #bbb;
     padding: 0.75rem;
     font-size: 1.3rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 .rt-card-img-wrap {
