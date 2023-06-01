@@ -8,7 +8,8 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "cross-env NODE_ENV=development vite",
-    "postinstall": "cpy --flat ./node_modules/material-symbols/*.{woff2,scss,css} ./src/fonts/",
+    "postinstall": "cpy --flat ./node_modules/material-symbols/*rounded.{woff2,scss,css} ./src/fonts/",
+       
     "build": "cross-env NODE_ENV=production vite build && npx workbox generateSW workbox-config.js",
     "build-capacitor-android": "cross-env NODE_ENV=production vite build && npx cap copy android"
   },
@@ -29,6 +30,7 @@
     "dom7": "^4.0.6",
     "framework7": "^8.0.5",
     "framework7-react": "^8.0.5",
+    "just-is-empty": "^3.4.1",
     "material-symbols": "^0.5.5",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",

@@ -19,7 +19,7 @@
   "theming": {
     "customColor": true,
     "color": "#4caf50",
-    "darkMode": false,
+    "darkMode":"auto",
     "iconFonts": false
   },
   "customBuild": false

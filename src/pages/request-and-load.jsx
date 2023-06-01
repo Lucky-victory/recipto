@@ -1,5 +1,5 @@
-import React from 'react';
-import { Page, Navbar, Block, List, ListItem } from 'framework7-react';
+import React from "react";
+import { Page, Navbar, Block, List, ListItem } from "framework7-react";
 
 const RequestAndLoad = (props) => {
   const { user } = props;

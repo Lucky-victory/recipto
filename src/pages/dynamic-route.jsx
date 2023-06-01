@@ -1,5 +1,5 @@
-import React from 'react';
-import { Page, Navbar, Block, Link } from 'framework7-react';
+import React from "react";
+import { Page, Navbar, Block, Link } from "framework7-react";
 
 const DynamicRoutePage = (props) => {
   const { f7route, f7router } = props;

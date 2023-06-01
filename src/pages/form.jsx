@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Page,
   Navbar,
@@ -10,7 +10,7 @@ import {
   Button,
   Range,
   Block,
-} from 'framework7-react';
+} from "framework7-react";
 
 const FormPage = () => (
   <Page name="form">
@@ -24,7 +24,11 @@ const FormPage = () => (
 
       <ListInput label="URL" type="url" placeholder="URL"></ListInput>
 
-      <ListInput label="Password" type="password" placeholder="Password"></ListInput>
+      <ListInput
+        label="Password"
+        type="password"
+        placeholder="Password"
+      ></ListInput>
 
       <ListInput label="Phone" type="tel" placeholder="Phone"></ListInput>
 
@@ -49,7 +53,12 @@ const FormPage = () => (
       </ListInput>
 
       <ListInput type="textarea" label="Textarea" placeholder="Bio"></ListInput>
-      <ListInput type="textarea" label="Resizable" placeholder="Bio" resizable></ListInput>
+      <ListInput
+        type="textarea"
+        label="Resizable"
+        placeholder="Bio"
+        resizable
+      ></ListInput>
     </List>
 
     <BlockTitle>Buttons</BlockTitle>
@@ -103,9 +112,24 @@ const FormPage = () => (
 
     <BlockTitle>Checkbox group</BlockTitle>
     <List strongIos outlineIos dividersIos>
-      <ListItem checkbox name="my-checkbox" value="Books" title="Books"></ListItem>
-      <ListItem checkbox name="my-checkbox" value="Movies" title="Movies"></ListItem>
-      <ListItem checkbox name="my-checkbox" value="Food" title="Food"></ListItem>
+      <ListItem
+        checkbox
+        name="my-checkbox"
+        value="Books"
+        title="Books"
+      ></ListItem>
+      <ListItem
+        checkbox
+        name="my-checkbox"
+        value="Movies"
+        title="Movies"
+      ></ListItem>
+      <ListItem
+        checkbox
+        name="my-checkbox"
+        value="Food"
+        title="Food"
+      ></ListItem>
     </List>
 
     <BlockTitle>Radio buttons group</BlockTitle>
