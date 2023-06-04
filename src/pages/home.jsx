@@ -18,7 +18,7 @@ import {
 import '../css/home.scss';
 import PostCard from '../components/post-card';
 import { isMobile } from '../js/helper';
-const HomePage = () => {
+const HomePage = ({ f7router }) => {
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const showSheetOrModal = (evt) => {
         setIsSheetOpen(true);
@@ -68,6 +68,12 @@ const HomePage = () => {
             comments_count: 15,
         },
     ];
+
+    function showRecipeAddPage() {
+        f7router.navigate('/recipe/add', {
+            openIn: !isMobile ? 'popup' : null,
+        });
+    }
     return (
         <Page name="home" pageContent={false} noNavbar>
             {/* Toolbar */}
@@ -96,6 +102,7 @@ const HomePage = () => {
                             <List mediaList className="rt-single-input-list">
                                 <ListInput
                                     outline
+                                    onFocus={showRecipeAddPage}
                                     readonly
                                     className="rt-input"
                                     placeholder="What are you cooking today?"
@@ -120,12 +127,7 @@ const HomePage = () => {
                                 </ListInput>
                                 <Block className="mt-0">
                                     <div className="flex">
-                                        <Button
-                                            openIn={!isMobile ? 'popup' : null}
-                                            round
-                                            href="/recipe/add"
-                                            outline
-                                        >
+                                        <Button href="/post/add" outline>
                                             <Icon
                                                 material="post_add"
                                                 className="material-symbols-rounded"

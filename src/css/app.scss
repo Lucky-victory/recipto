@@ -1,18 +1,18 @@
 /* Left Panel right border when it is visible by breakpoint */
 .panel-left.panel-in-breakpoint:before {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 1px;
-  background: rgba(0, 0, 0, 0.1);
-  content: "";
-  z-index: 6000;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    content: '';
+    z-index: 6000;
 }
 
 /* Hide navbar link which opens left panel when it is visible by breakpoint */
-.panel-left.panel-in-breakpoint ~ .view .navbar .panel-open[data-panel="left"] {
-  display: none;
+.panel-left.panel-in-breakpoint ~ .view .navbar .panel-open[data-panel='left'] {
+    display: none;
 }
 
 /*
@@ -20,84 +20,110 @@
 */
 .ios .panel-left:not(.panel-in-breakpoint).panel-in ~ .view-main:before,
 .ios .panel-left:not(.panel-in-breakpoint).panel-closing ~ .view-main:before {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 1px;
-  background: rgba(0, 0, 0, 0.1);
-  content: "";
-  z-index: 6000;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    content: '';
+    z-index: 6000;
 }
 
+.popup:not(.popup-tablet-fullscreen) {
+    --f7-safe-area-top: 0px;
+    --f7-safe-area-bottom: 0px;
+    --f7-popup-tablet-width: 400px;
+    --f7-popup-tablet-height: 400px;
+
+    // margin-left: calc(-1 * var(--f7-popup-tablet-width) / 2);
+    // margin-top: calc(-1 * var(--f7-popup-tablet-height) / 2);
+    // transform: translate3d(0, 100vh, 0);
+    // border-radius: var(--f7-popup-tablet-border-radius, var(--f7-popup-border-radius));
+}
+.popup {
+    &.page-leave-popup {
+        max-width: 400px;
+        max-height: 350px;
+        align-self: center;
+    }
+}
+.rt-btn-plain {
+    display: inline-block;
+    color: inherit;
+
+    &:not(:last-child) {
+        margin-right: 1rem;
+    }
+}
 // Util classes
 .flex {
-  display: flex;
+    display: flex;
 }
 .flex-grow {
-  flex-grow: 1;
+    flex-grow: 1;
 }
 .jc-center {
-  justify-content: center;
+    justify-content: center;
 }
-.jc-sb{
-  justify-content: space-between;
+.jc-sb {
+    justify-content: space-between;
 }
 .text-bold {
-  font-weight: 600;
+    font-weight: 600;
 }
 .text-grey {
-  color: grey;
+    color: grey;
 }
-.text-md{
-  font-size: 18px;
+.text-md {
+    font-size: 18px;
 }
 .text-sm {
-  font-size: 14px;
+    font-size: 14px;
 }
 .ov-hidden {
-  overflow: hidden;
+    overflow: hidden;
 }
 .inline-block {
-  display: inline-block;
+    display: inline-block;
 }
 .ml-4 {
-  margin-left: 1rem;
+    margin-left: 1rem;
 }
 
 .p-4 {
-  padding: 1rem;
+    padding: 1rem;
 }
 .p-2 {
-  padding: 0.5rem;
+    padding: 0.5rem;
 }
 .px-2 {
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
 }
 .mt-a {
-  margin-top: auto;
+    margin-top: auto;
 }
 .mb-a {
-  margin-bottom: auto;
+    margin-bottom: auto;
 }
 .mb-0 {
-  margin-bottom: 0;
+    margin-bottom: 0;
 }
 .mt-0 {
-  margin-top: 0;
+    margin-top: 0;
 }
 .mt-2 {
-  margin-top: 0.5rem;
+    margin-top: 0.5rem;
 }
 .mb-2 {
-  margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem;
 }
 .mt-4 {
-  margin-top: 1rem;
+    margin-top: 1rem;
 }
 .mb-4 {
-  margin-bottom: 1rem;
+    margin-bottom: 1rem;
 }
 
 /**
@@ -105,65 +131,65 @@
 Global styles
 **/
 .page {
-  // background: #f7f8f7;
+    // background: #f7f8f7;
 }
 
 :root {
-  --f7-md-surface: #f7f7f6 !important;
-  --card-bg: #fff;
-  --f7-card-bg-color: var(--card-bg);
+    --f7-md-surface: #f7f7f6 !important;
+    --card-bg: #fff;
+    --f7-card-bg-color: var(--card-bg);
 
-  &.dark {
-    --f7-md-surface: #1a1c19 !important;
-    --card-bg: #1f261e;
-  }
-  .dark {
-    --card-bg: #1f261e;
-  }
+    &.dark {
+        --f7-md-surface: #1a1c19 !important;
+        --card-bg: #1f261e;
+    }
+    .dark {
+        --card-bg: #1f261e;
+    }
 }
 
 .rt-avatar {
-  --rt-avatar-w: 3rem;
-  width: var(--rt-avatar-w);
-  height: var(--rt-avatar-w);
-  border-radius: 50%;
-  display: block;
+    --rt-avatar-w: 3rem;
+    width: var(--rt-avatar-w);
+    height: var(--rt-avatar-w);
+    border-radius: 50%;
+    display: block;
 
-  margin-bottom: auto;
-  &.rt-avatar-sm {
-    --rt-avatar-w: 2.5rem;
-  }
+    margin-bottom: auto;
+    &.rt-avatar-sm {
+        --rt-avatar-w: 2.5rem;
+    }
 }
 
 .rt-img-placeholder {
-  font-size: 5rem;
-  height: 100%;
-  font-weight: 900;
-  text-align: center;
-  display: flex;
-  padding: 0.75rem;
-  justify-content: center;
-  align-items: center;
-  color: #ccc7;
-  inset: 0;
-  position: absolute;
+    font-size: 5rem;
+    height: 100%;
+    font-weight: 900;
+    text-align: center;
+    display: flex;
+    padding: 0.75rem;
+    justify-content: center;
+    align-items: center;
+    color: #ccc7;
+    inset: 0;
+    position: absolute;
 }
 
 // Add recipe page styles
 
 .rt-list {
-  * {
-    font-weight: 500;
-  }
-  .rt-list-title {
-    font-weight: 600;
-    font-size: 1.25rem;
-    background: transparent;
-  }
-
-  .rt-list-input {
-    ::placeholder {
-      color: #aaa;
+    * {
+        font-weight: 500;
     }
-  }
+    .rt-list-title {
+        font-weight: 600;
+        font-size: 1.25rem;
+        background: transparent;
+    }
+
+    .rt-list-input {
+        ::placeholder {
+            color: #aaa;
+        }
+    }
 }

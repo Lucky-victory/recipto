@@ -34,6 +34,7 @@ const MyApp = () => {
         darkMode: 'auto',
         popup: {
             closeByBackdropClick: false,
+            backdropUnique: true,
         },
 
         // App store

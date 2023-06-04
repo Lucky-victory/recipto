@@ -9,11 +9,59 @@ import { getDevice } from 'framework7';
 import NewPostPage from '../pages/new-post-page.jsx';
 import RecipeAddPage from '../pages/recipe/add.jsx';
 import PostAddPage from '../pages/post/add.jsx';
+import { f7 } from 'framework7-react';
 
 const device = getDevice();
 
 const isMobile = device.ios || device.android;
 const transition = isMobile ? 'f7-cover' : undefined;
+function checkAuth({ to, from, resolve, reject }) {
+    if (/* some condition to check user is logged in */ 1) {
+        resolve();
+    } else {
+        reject();
+    }
+}
+function checkPermission({ to, from, resolve, reject }) {
+    if (/* some condition to check user edit permission */ 1) {
+        resolve();
+    } else {
+        reject();
+    }
+}
+function beforeLeave({ to, resolve, reject }) {
+    if (to.path !== '/recipe/add') {
+        const s = f7.popup.create({
+            content: ` <div class="popup page-leave-popup" >
+  <div class="view">
+    <div class="page">
+    
+      <div class="page-content">
+        ...
+      </div>
+    </div>
+  </div>
+  ...
+</div>`,
+            on: {},
+        });
+        s.open();
+        f7.dialog.confirm(
+            'Are you sure you want to leave this page without saving data?',
+            function () {
+                // proceed navigation
+                resolve();
+            },
+            function () {
+                // stay on page
+                reject();
+            }
+        );
+    } else {
+        resolve();
+    }
+}
+
 const routes = [
     {
         path: '/',
@@ -33,6 +81,7 @@ const routes = [
             {
                 path: '/add',
                 component: RecipeAddPage,
+                beforeLeave,
             },
         ],
     },
@@ -42,7 +91,9 @@ const routes = [
         routes: [
             {
                 path: '/add',
+
                 component: PostAddPage,
+                beforeLeave,
             },
         ],
     },

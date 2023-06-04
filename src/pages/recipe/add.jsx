@@ -93,7 +93,7 @@ const RecipeAddPage = () => {
             <Navbar
                 outline
                 onBackClick={handleBackClick}
-                backLink={isMobile && 'Back'}
+                backLink={isMobile}
                 title="Add Recipe"
             >
                 <NavRight style={{ paddingRight: '1rem' }}>
@@ -102,7 +102,7 @@ const RecipeAddPage = () => {
                             Save
                         </Button>
                     )}
-                    {!isMobile && <Button large text="Close" popupClose />}
+                    {!isMobile && <Button large text="Close" popupClose back />}
                 </NavRight>
             </Navbar>
 
@@ -276,7 +276,11 @@ const RecipeAddPage = () => {
 
                 {!isMobile && (
                     <Block>
-                        <Button large fill round style={{ minWidth: '5rem' }}>
+                        <Button
+                            large
+                            fill
+                            style={{ width: '7rem', fontSize: 18 }}
+                        >
                             Save
                         </Button>
                     </Block>
