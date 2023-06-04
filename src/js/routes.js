@@ -5,7 +5,7 @@ import RequestAndLoad from "../pages/request-and-load.jsx";
 import NotFoundPage from "../pages/404.jsx";
 import NewRecipePage from "../pages/new-recipe-page.jsx";
 
-import { getDevice } from "framework7/types";
+import { getDevice } from "framework7";
 
 const device = getDevice();
 
