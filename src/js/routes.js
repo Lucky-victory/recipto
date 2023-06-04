@@ -1,87 +1,103 @@
-import HomePage from "../pages/home.jsx";
-import AboutPage from "../pages/about.jsx";
-import DynamicRoutePage from "../pages/dynamic-route.jsx";
-import RequestAndLoad from "../pages/request-and-load.jsx";
-import NotFoundPage from "../pages/404.jsx";
-import NewRecipePage from "../pages/new-recipe-page.jsx";
+import HomePage from '../pages/home.jsx';
+import AboutPage from '../pages/about.jsx';
+import DynamicRoutePage from '../pages/dynamic-route.jsx';
+import RequestAndLoad from '../pages/request-and-load.jsx';
+import NotFoundPage from '../pages/404.jsx';
+import NewRecipePage from '../pages/new-recipe-page.jsx';
 
-import { getDevice } from "framework7";
+import { getDevice } from 'framework7';
+import NewPostPage from '../pages/new-post-page.jsx';
+import RecipeAddPage from '../pages/recipe/add.jsx';
+import PostAddPage from '../pages/post/add.jsx';
 
 const device = getDevice();
 
 const isMobile = device.ios || device.android;
-const transition = isMobile ? "f7-cover" : undefined;
+const transition = isMobile ? 'f7-cover' : undefined;
 const routes = [
-  {
-    path: "/",
-    component: HomePage,
-    options: {
-      transition,
+    {
+        path: '/',
+        component: HomePage,
+        options: {
+            transition,
+        },
     },
-  },
-  {
-    path: "/about/",
-    component: AboutPage,
-  },
-  {
-    path: "/add-recipe/",
-    component: NewRecipePage,
-    options: {
-      transition,
+    {
+        path: '/about/',
+        component: AboutPage,
     },
-  },
-
-  {
-    path: "/request-and-load/user/:userId/",
-    async: function ({ router, to, resolve }) {
-      // App instance
-      var app = router.app;
-
-      // Show Preloader
-      app.preloader.show();
-
-      // User ID from request
-      var userId = to.params.userId;
-
-      // Simulate Ajax Request
-      setTimeout(function () {
-        // We got user data from request
-        var user = {
-          firstName: "Vladimir",
-          lastName: "Kharlampidi",
-          about: "Hello, i am creator of Framework7! Hope you like it!",
-          links: [
+    {
+        path: '/recipe/',
+        component: NewRecipePage,
+        routes: [
             {
-              title: "Framework7 Website",
-              url: "http://framework7.io",
+                path: '/add',
+                component: RecipeAddPage,
             },
-            {
-              title: "Framework7 Forum",
-              url: "http://forum.framework7.io",
-            },
-          ],
-        };
-        // Hide Preloader
-        app.preloader.hide();
-
-        // Resolve route to load page
-        resolve(
-          {
-            component: RequestAndLoad,
-          },
-          {
-            props: {
-              user: user,
-            },
-          }
-        );
-      }, 1000);
+        ],
     },
-  },
-  {
-    path: "(.*)",
-    component: NotFoundPage,
-  },
+    {
+        path: '/post/',
+        component: NewPostPage,
+        routes: [
+            {
+                path: '/add',
+                component: PostAddPage,
+            },
+        ],
+    },
+
+    {
+        path: '/request-and-load/user/:userId/',
+        async: function ({ router, to, resolve }) {
+            // App instance
+            var app = router.app;
+
+            // Show Preloader
+            app.preloader.show();
+
+            // User ID from request
+            var userId = to.params.userId;
+
+            // Simulate Ajax Request
+            setTimeout(function () {
+                // We got user data from request
+                var user = {
+                    firstName: 'Vladimir',
+                    lastName: 'Kharlampidi',
+                    about: 'Hello, i am creator of Framework7! Hope you like it!',
+                    links: [
+                        {
+                            title: 'Framework7 Website',
+                            url: 'http://framework7.io',
+                        },
+                        {
+                            title: 'Framework7 Forum',
+                            url: 'http://forum.framework7.io',
+                        },
+                    ],
+                };
+                // Hide Preloader
+                app.preloader.hide();
+
+                // Resolve route to load page
+                resolve(
+                    {
+                        component: RequestAndLoad,
+                    },
+                    {
+                        props: {
+                            user: user,
+                        },
+                    }
+                );
+            }, 1000);
+        },
+    },
+    {
+        path: '(.*)',
+        component: NotFoundPage,
+    },
 ];
 
 export default routes;
