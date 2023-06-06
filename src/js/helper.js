@@ -4,6 +4,10 @@ import { v4 } from 'uuid';
 const device = getDevice();
 export const isMobile = device.ios || device.android;
 
+export const envConfig = {
+    PROJECT_ID: import.meta.env.VITE_APPWRITE_PROJECT_ID,
+    BUCKET_ID: import.meta.env.VITE_APPWRITE_BUCKET_ID,
+};
 class Utils {
     genID(prefix = '', dashes = true) {
         const id = dashes ? v4() : v4().replace(/[-]/g, '');
@@ -23,7 +27,7 @@ export class AppWriteHandler {
         this.appAccount = new Account(this.client);
         this.client
             .setEndpoint('https://cloud.appwrite.io/v1') // Your API Endpoint
-            .setProject('vick_recipto_2023'); // Your project ID
+            .setProject(envConfig.PROJECT_ID || 'vick_recipto_2023'); // Your project ID
     }
     get storage() {
         return this.appStorage;

@@ -16,7 +16,7 @@ import {
     f7,
 } from 'framework7-react';
 import React, { useEffect, useState } from 'react';
-import { appwriteHandler, isMobile, utils } from '../../js/helper';
+import { appwriteHandler, envConfig, isMobile, utils } from '../../js/helper';
 import '@/css/post.scss';
 import { $ } from 'dom7';
 import isEmpty from 'just-is-empty';
@@ -48,7 +48,7 @@ const PostAddPage = ({ f7router }) => {
             setIsLoadingPhoto(true);
             setPhotoPreview(null);
             const fileId = utils.genID();
-            const bucketId = '647caba948df689017b0';
+            const bucketId = envConfig.BUCKET_ID || '647caba948df689017b0';
             appwriteHandler.storage
                 .createFile(bucketId, fileId, files[0])
                 .then(() => {

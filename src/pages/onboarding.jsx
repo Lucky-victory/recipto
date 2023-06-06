@@ -5,6 +5,7 @@ import {
     Icon,
     List,
     ListItem,
+    Navbar,
     Page,
 } from 'framework7-react';
 import React from 'react';
@@ -12,6 +13,7 @@ import '@/css/onboarding.scss';
 const OnboardingPage = () => {
     return (
         <Page name="onboarding" noNavbar noToolbar>
+            <Navbar></Navbar>
             <div className="rt-onboarding-page-inner">
                 <video
                     loop

@@ -1,7 +1,9 @@
 .rt-onboarding-page-inner {
-    height: 100%;
+    height: calc(100% - var(--f7-navbar-height));
+    margin-top: var(--f7-navbar-height);
+    overflow-y: auto;
     width: 100%;
-
+    bottom: 0;
     position: relative;
     .rt-video {
         position: absolute;

@@ -2,15 +2,52 @@ import {
     Block,
     BlockTitle,
     Button,
+    Icon,
     List,
     ListInput,
     Navbar,
     Page,
 } from 'framework7-react';
-import React from 'react';
-import { isMobile } from '../js/helper';
+import React, { useState } from 'react';
+import { appwriteHandler, isMobile, utils } from '../js/helper';
 import '@/css/signin-up.scss';
 const SignInPage = () => {
+    const [signUpForm, setSignupForm] = useState({
+        fullname: '',
+        password: '',
+        email: '',
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const handleInputChange = (ev) => {
+        const { name, value } = ev.target;
+        setSignupForm((prev) => ({ ...prev, [name]: value }));
+    };
+    async function handleFormSubmit(ev) {
+        ev.preventDefault();
+        setIsSubmitting(true);
+        try {
+            // const newUser = await appwriteHandler.account.create(
+            //     utils.genID(),
+            //     signUpForm.email,
+            //     signUpForm.password,
+            //     signUpForm.fullname
+            // );
+            // const tt = await appwriteHandler.account.createEmailSession(
+            //     signUpForm.email,
+            //     signUpForm.password
+            // );
+            const tt = await appwriteHandler.account.createVerification(
+                'http://localhost:5174/verify/'
+            );
+
+            console.log({ newUser: null, tt });
+            setIsSubmitting(false);
+            ev.target.reset();
+        } catch (e) {
+            setIsSubmitting(false);
+            console.log('error', { e });
+        }
+    }
     return (
         <Page
             name="signin"
@@ -18,7 +55,7 @@ const SignInPage = () => {
             noToolbar
             noNavbar={!isMobile}
         >
-            {isMobile && <Navbar className="rt-navbar" backLink />}
+            <Navbar className="rt-navbar" backLink={isMobile} />
             <div className="rt-signin-page-inner flex">
                 <Block className="rt-signin-page-banner-wrap">
                     <div className="rt-overlay"></div>
@@ -40,21 +77,58 @@ const SignInPage = () => {
                         <BlockTitle large className="text-center mb-4">
                             Join over 1,000 Users sharing their recipes
                         </BlockTitle>
-                        <List>
-                            <ListInput label={'Your Name'} outline />
+                        <List form onSubmit={handleFormSubmit}>
+                            <ListInput
+                                label={'Your Name'}
+                                outline
+                                required
+                                onChange={handleInputChange}
+                                name="fullname"
+                                value={signUpForm.fullname}
+                            />
                             <ListInput
                                 type="email"
+                                name="email"
+                                validate
+                                onChange={handleInputChange}
+                                required
+                                value={signUpForm.email}
                                 label={'E-mail address'}
                                 outline
                             />
                             <ListInput
+                                info="min: 8 characters"
                                 label={'Password'}
+                                name="password"
+                                onChange={handleInputChange}
+                                required
                                 type="password"
                                 outline
                             />
 
                             <Block>
-                                <Button large text="Sign Up" fill />
+                                <Button
+                                    type="submit"
+                                    large
+                                    text="Sign Up"
+                                    fill
+                                    disabled={isSubmitting}
+                                    preloader
+                                    loading={isSubmitting}
+                                />
+                            </Block>
+                            <Block
+                                className="rt-divider"
+                                data-text="or"
+                            ></Block>
+                            <Block>
+                                <Button outline large disabled={isSubmitting}>
+                                    <img
+                                        className="rt-google-icon"
+                                        src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+                                    />
+                                    <span>Continue with Google</span>
+                                </Button>
                             </Block>
                         </List>
                     </div>

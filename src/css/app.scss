@@ -1,6 +1,6 @@
-:root{
-    --rt-radius-md:12px;
-    --rt-radius-sm:6px;
+:root {
+    --rt-radius-md: 12px;
+    --rt-radius-sm: 6px;
 }
 
 /* Left Panel right border when it is visible by breakpoint */
@@ -33,6 +33,31 @@
     background: rgba(0, 0, 0, 0.1);
     content: '';
     z-index: 6000;
+}
+.rt-divider {
+    height: 2px;
+    background: var(--f7-md-surface-3);
+    position: relative;
+    padding: 0;
+    &::before {
+        position: absolute;
+        content: attr(data-text);
+        background: var(--f7-md-surface);
+        left: 50%;
+        transform: translateX(-50%);
+        top: -12px;
+        padding: 0 0.375rem;
+        color: inherit;
+    }
+}
+
+.rt-google-icon {
+    width: 30px;
+    display: inline-block;
+    margin-right: 1rem;
+}
+.navbar {
+    --f7-navbar-bg-color: var(--f7-md-surface);
 }
 .popup {
     &.page-exit-popup {

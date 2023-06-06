@@ -18,12 +18,25 @@ import {
 import '@/css/home.scss';
 import PostCard from '@/components/post-card';
 import { isMobile } from '@/js/helper';
+import { appwriteHandler } from '../js/helper';
 const HomePage = ({ f7router }) => {
+    const [currentUser, setCurrentUser] = useState(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const showSheetOrModal = (evt) => {
         setIsSheetOpen(true);
     };
-
+    async function getUser() {
+        try {
+            const u = await appwriteHandler.account.updatePrefs({
+                avatar: 'https://randomuser.me/api/portraits/men/40.jpg',
+            });
+            const user = await appwriteHandler.account.get();
+            setCurrentUser(user);
+            console.log({ u, user });
+        } catch (e) {
+            console.log('user error', e);
+        }
+    }
     const posts = [
         {
             text: 'I just joined this site',
@@ -75,7 +88,7 @@ const HomePage = ({ f7router }) => {
         });
     }
     return (
-        <Page name="home" pageContent={false} noNavbar>
+        <Page name="home" onPageBeforeIn={getUser} pageContent={false} noNavbar>
             {/* Toolbar */}
             <div className=" rt-toolbar-wrap">
                 <Toolbar top tabbar className="rt-toolbar">

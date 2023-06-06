@@ -13,6 +13,7 @@ import { f7 } from 'framework7-react';
 import SignInPage from '../pages/signin.jsx';
 import SignupPage from '../pages/signup.jsx';
 import OnboardingPage from '../pages/onboarding.jsx';
+import VerifyUserPage from '../pages/verify.jsx';
 
 const device = getDevice();
 
@@ -66,8 +67,12 @@ const routes = [
     },
     {
         alias: '/register/',
-        path: '/signup/',
+        path: '/signin/',
         component: SignupPage,
+    },
+    {
+        path: '/verify/',
+        component: VerifyUserPage,
     },
     {
         alias: '/onboard/',
