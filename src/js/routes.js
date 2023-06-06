@@ -11,6 +11,8 @@ import RecipeAddPage from '../pages/recipe/add.jsx';
 import PostAddPage from '../pages/post/add.jsx';
 import { f7 } from 'framework7-react';
 import SignInPage from '../pages/signin.jsx';
+import SignupPage from '../pages/signup.jsx';
+import OnboardingPage from '../pages/onboarding.jsx';
 
 const device = getDevice();
 
@@ -52,23 +54,25 @@ const routes = [
     {
         path: '/',
         component: HomePage,
-        options: {
-            transition,
-        },
     },
     {
         path: '/about/',
         component: AboutPage,
     },
     {
-        alias: '/login/',
+        alias: ['/join/', '/login/'],
         path: '/signin/',
         component: SignInPage,
     },
     {
         alias: '/register/',
         path: '/signup/',
-        component: AboutPage,
+        component: SignupPage,
+    },
+    {
+        alias: '/onboard/',
+        path: '/welcome/',
+        component: OnboardingPage,
     },
     {
         path: '/recipe/',
