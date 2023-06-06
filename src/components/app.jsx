@@ -79,7 +79,7 @@ const MyApp = () => {
     return (
         <App {...f7params} style={{ maxWidth: 1200, margin: '0 auto' }}>
             {/* Left panel with cover effect when hidden */}
-            <Panel left reveal visibleBreakpoint={960}>
+            {/* <Panel left reveal visibleBreakpoint={960}>
                 <View>
                     <Page>
                         <Navbar title="Left Panel" />
@@ -108,7 +108,7 @@ const MyApp = () => {
                         </List>
                     </Page>
                 </View>
-            </Panel>
+            </Panel> */}
 
             {/* Right panel with reveal effect
       <Panel right reveal visibleBreakpoint={700}>

@@ -34,7 +34,7 @@ const PostAddPage = ({ f7router }) => {
         created_at: utils.currentDate.toISOString(),
         updated_at: utils.currentDate.toISOString(),
     });
-    const [disableSubmitBtn, setDisableSubmitBtn] = useState(false);
+    const [isEmptyPost, setIsEmptyPost] = useState(false);
     const handleInputClick = async () => {
         $('#photo-input').click();
     };
@@ -76,9 +76,9 @@ const PostAddPage = ({ f7router }) => {
     }
     useEffect(() => {
         if (isEmpty(post.text) && isEmpty(post.photo) && isEmpty(post.recipe)) {
-            setDisableSubmitBtn(true);
+            setIsEmptyPost(true);
         } else {
-            setDisableSubmitBtn(false);
+            setIsEmptyPost(false);
         }
         console.log({ post });
     }, [post]);
@@ -93,7 +93,11 @@ const PostAddPage = ({ f7router }) => {
         }
     };
     function handlePopupOpen() {
-        f7.popup.open('#page-exit-popup');
+        if (!isEmptyPost) {
+            f7.popup.open('#page-exit-popup');
+        } else {
+            f7.popup.close();
+        }
     }
     function handleBackClick() {
         f7router.back();
@@ -208,7 +212,7 @@ const PostAddPage = ({ f7router }) => {
                 {!isMobile && (
                     <Block>
                         <Button
-                            disabled={disableSubmitBtn}
+                            disabled={isEmptyPost}
                             fill
                             style={{ width: '7rem', fontSize: 18 }}
                         >

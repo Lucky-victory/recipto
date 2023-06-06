@@ -3,7 +3,7 @@ import React from 'react';
 
 const SignupPage = () => {
     return (
-        <Page name="signup">
+        <Page name="signup" noToolbar>
             <div className="rt-signup-page-inner flex">
                 <Block strong></Block>
                 <Block strong></Block>

@@ -15,9 +15,9 @@ import {
     ListInput,
 } from 'framework7-react';
 
-import '../css/home.scss';
-import PostCard from '../components/post-card';
-import { isMobile } from '../js/helper';
+import '@/css/home.scss';
+import PostCard from '@/components/post-card';
+import { isMobile } from '@/js/helper';
 const HomePage = ({ f7router }) => {
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const showSheetOrModal = (evt) => {
@@ -83,6 +83,8 @@ const HomePage = ({ f7router }) => {
                         Feed
                     </Link>
                     <Link tabLink="#community-tab">Communities</Link>
+                    <Link text="signin" href="/signin/" />
+                    <Link text="onboard" href="/onboard/" />
                 </Toolbar>
                 <div className="flex jc-center mt-a mb-a">
                     <Link iconOnly href="/about/">

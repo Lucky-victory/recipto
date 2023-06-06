@@ -1,3 +1,8 @@
+:root{
+    --rt-radius-md:12px;
+    --rt-radius-sm:6px;
+}
+
 /* Left Panel right border when it is visible by breakpoint */
 .panel-left.panel-in-breakpoint:before {
     position: absolute;
@@ -29,7 +34,6 @@
     content: '';
     z-index: 6000;
 }
-
 .popup {
     &.page-exit-popup {
         --f7-safe-area-top: 0px;
@@ -50,6 +54,12 @@
     }
 }
 // Util classes
+.rt-overlay {
+    position: absolute;
+    inset: 0;
+    background: #0006;
+    z-index: 2;
+}
 .flex {
     display: flex;
 }
@@ -64,6 +74,10 @@
 }
 .jc-sb {
     justify-content: space-between;
+}
+
+.text-center {
+    text-align: center;
 }
 .text-bold {
     font-weight: 600;
@@ -88,6 +102,9 @@
 }
 .mb-2 {
     margin-bottom: 0.5rem;
+}
+.mb-4 {
+    margin-bottom: 1rem;
 }
 .m-0 {
     margin: 0;
