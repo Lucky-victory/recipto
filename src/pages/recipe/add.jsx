@@ -19,17 +19,15 @@ import { Dom7, getDevice } from 'framework7';
 import React, { useEffect, useState } from 'react';
 import isEmpty from 'just-is-empty';
 import { isMobile } from '@/js/helper';
+import PageExitPopup from '../../components/page-exit-popup';
 
 const $$ = Dom7;
-const RecipeAddPage = () => {
+const RecipeAddPage = ({ f7router }) => {
     const [ingredients, setIngredients] = useState([
         { header: '', content: [{ media: '', text: '' }] },
     ]);
     const [currentIngredIndex, setCurrentIngredIndex] = useState(0);
     const [editIndex, setEditIndex] = useState(null);
-    const handleBackClick = () => {
-        //     f7.dialog.alert('Are you sure')
-    };
 
     function addHeader() {
         const newIngredients = [
@@ -88,6 +86,21 @@ const RecipeAddPage = () => {
         return () => ingredientInput.off('keydown', handleIngredientsAdd);
     }, []);
     useEffect(() => {}, [ingredients]);
+    const handlePopupClose = (canExit) => {
+        if (canExit) {
+            handleBackClick();
+            f7.popup.close('#page-exit-popup');
+            f7.popup.close();
+        } else {
+            f7.popup.close('#page-exit-popup');
+        }
+    };
+    function handlePopupOpen() {
+        f7.popup.open('#page-exit-popup');
+    }
+    function handleBackClick() {
+        f7router.back();
+    }
     return (
         <Page name="recipe-add">
             <Navbar
@@ -102,7 +115,9 @@ const RecipeAddPage = () => {
                             Save
                         </Button>
                     )}
-                    {!isMobile && <Button large text="Close" popupClose back />}
+                    {!isMobile && (
+                        <Button large text="Close" onClick={handlePopupOpen} />
+                    )}
                 </NavRight>
             </Navbar>
 
@@ -116,7 +131,7 @@ const RecipeAddPage = () => {
                     className="rt-list-input"
                     name="title"
                     placeholder="Give your recipe a name"
-                    outline={theme.md}
+                    outline
                 />
 
                 <ListItem
@@ -128,7 +143,7 @@ const RecipeAddPage = () => {
                     className="rt-list-input"
                     name="description"
                     type="textarea"
-                    outline={theme.md}
+                    outline
                     placeholder="Introduce your recipe, add notes, cooking tips..."
                 />
 
@@ -209,7 +224,7 @@ const RecipeAddPage = () => {
                     <ListInput
                         className="rt-list-input rt-ingredient-input"
                         clearButton
-                        outline={theme.md}
+                        outline
                         placeholder="Add or paste ingredients"
                         data-index={currentIngredIndex}
                     />
@@ -260,7 +275,7 @@ const RecipeAddPage = () => {
                     <ListInput
                         className="rt-list-input"
                         clearButton
-                        outline={theme.md}
+                        outline
                         placeholder="Add or paste instructions"
                     />
                     <Block className="mt-2 mb-0">
@@ -276,16 +291,16 @@ const RecipeAddPage = () => {
 
                 {!isMobile && (
                     <Block>
-                        <Button
-                            large
-                            fill
-                            style={{ width: '7rem', fontSize: 18 }}
-                        >
+                        <Button fill style={{ width: '7rem', fontSize: 18 }}>
                             Save
                         </Button>
                     </Block>
                 )}
             </List>
+            <PageExitPopup
+                onCancel={() => handlePopupClose()}
+                onExit={handlePopupClose}
+            />
         </Page>
     );
 };

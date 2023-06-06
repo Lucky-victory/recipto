@@ -7,18 +7,22 @@ import {
     ListGroup,
     ListInput,
     ListItem,
+    NavLeft,
     NavRight,
+    NavTitle,
     Navbar,
     Page,
     Preloader,
+    f7,
 } from 'framework7-react';
 import React, { useEffect, useState } from 'react';
 import { appwriteHandler, isMobile, utils } from '../../js/helper';
 import '@/css/post.scss';
 import { $ } from 'dom7';
 import isEmpty from 'just-is-empty';
+import PageExitPopup from '../../components/page-exit-popup';
 
-const PostAddPage = () => {
+const PostAddPage = ({ f7router }) => {
     const [isLoadingPhoto, setIsLoadingPhoto] = useState(false);
     const [post, setPost] = useState({
         id: utils.genID('post_', false),
@@ -47,7 +51,7 @@ const PostAddPage = () => {
             const bucketId = '647caba948df689017b0';
             appwriteHandler.storage
                 .createFile(bucketId, fileId, files[0])
-                .then((res) => {
+                .then(() => {
                     const url = appwriteHandler.storage.getFileView(
                         bucketId,
                         fileId
@@ -78,16 +82,43 @@ const PostAddPage = () => {
         }
         console.log({ post });
     }, [post]);
+
+    const handlePopupClose = (canExit) => {
+        if (canExit) {
+            handleBackClick();
+            f7.popup.close('#page-exit-popup');
+            f7.popup.close();
+        } else {
+            f7.popup.close('#page-exit-popup');
+        }
+    };
+    function handlePopupOpen() {
+        f7.popup.open('#page-exit-popup');
+    }
+    function handleBackClick() {
+        f7router.back();
+    }
+
     return (
         <Page name="post-add">
-            <Navbar backLink={isMobile} title="Your Post">
+            <Navbar>
+                {isMobile && (
+                    <NavLeft>
+                        <Link iconOnly onClick={handleBackClick}>
+                            <Icon className="icon-back" />
+                        </Link>
+                    </NavLeft>
+                )}
+                <NavTitle title="Your Post" />
                 <NavRight style={{ paddingRight: '1rem' }}>
                     {isMobile && (
                         <Button fill round style={{ minWidth: '5rem' }}>
                             Post
                         </Button>
                     )}
-                    {!isMobile && <Button large text="Close" popupClose back />}
+                    {!isMobile && (
+                        <Button large text="Close" onClick={handlePopupOpen} />
+                    )}
                 </NavRight>
             </Navbar>
             <List>
@@ -178,7 +209,6 @@ const PostAddPage = () => {
                     <Block>
                         <Button
                             disabled={disableSubmitBtn}
-                            large
                             fill
                             style={{ width: '7rem', fontSize: 18 }}
                         >
@@ -187,6 +217,10 @@ const PostAddPage = () => {
                     </Block>
                 )}
             </List>
+            <PageExitPopup
+                onCancel={() => handlePopupClose()}
+                onExit={handlePopupClose}
+            />
         </Page>
     );
 };

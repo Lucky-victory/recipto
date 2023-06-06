@@ -10,6 +10,7 @@ import NewPostPage from '../pages/new-post-page.jsx';
 import RecipeAddPage from '../pages/recipe/add.jsx';
 import PostAddPage from '../pages/post/add.jsx';
 import { f7 } from 'framework7-react';
+import SignInPage from '../pages/signin.jsx';
 
 const device = getDevice();
 
@@ -31,21 +32,6 @@ function checkPermission({ to, from, resolve, reject }) {
 }
 function beforeLeave({ to, resolve, reject }) {
     if (to.path !== '/recipe/add') {
-        const s = f7.popup.create({
-            content: ` <div class="popup page-leave-popup" >
-  <div class="view">
-    <div class="page">
-    
-      <div class="page-content">
-        ...
-      </div>
-    </div>
-  </div>
-  ...
-</div>`,
-            on: {},
-        });
-        s.open();
         f7.dialog.confirm(
             'Are you sure you want to leave this page without saving data?',
             function () {
@@ -75,6 +61,16 @@ const routes = [
         component: AboutPage,
     },
     {
+        alias: '/login/',
+        path: '/signin/',
+        component: SignInPage,
+    },
+    {
+        alias: '/register/',
+        path: '/signup/',
+        component: AboutPage,
+    },
+    {
         path: '/recipe/',
         component: NewRecipePage,
         routes: [
@@ -93,7 +89,6 @@ const routes = [
                 path: '/add',
 
                 component: PostAddPage,
-                beforeLeave,
             },
         ],
     },

@@ -127,7 +127,11 @@ const HomePage = ({ f7router }) => {
                                 </ListInput>
                                 <Block className="mt-0">
                                     <div className="flex">
-                                        <Button href="/post/add" outline>
+                                        <Button
+                                            href="/post/add"
+                                            openIn="popup"
+                                            outline
+                                        >
                                             <Icon
                                                 material="post_add"
                                                 className="material-symbols-rounded"
