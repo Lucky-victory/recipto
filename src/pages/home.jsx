@@ -123,12 +123,9 @@ const HomePage = ({ f7router }) => {
                         Feed
                     </Link>
                     <Link tabLink="#community-tab">Communities</Link>
-                    <Link text="signin" href="/signin/" />
-                    <Link text="onboard" href="/onboard/" />
                 </Toolbar>
                 <div className="flex jc-center mt-a mb-a">
-                    <Button text="logout" onClick={logout} />
-                    <Avatar user={currentUser} />
+                    <Avatar link={'/about/'} user={currentUser} />
                 </div>
             </div>
             {/* Page content */}

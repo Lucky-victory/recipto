@@ -102,7 +102,7 @@ const RecipeAddPage = ({ f7router }) => {
         f7router.back();
     }
     return (
-        <Page name="recipe-add">
+        <Page name="recipe-add" className="custom-bg">
             <Navbar
                 outline
                 onBackClick={handleBackClick}

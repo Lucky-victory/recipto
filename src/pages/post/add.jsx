@@ -20,20 +20,31 @@ import { appwriteHandler, envConfig, isMobile, utils } from '../../js/helper';
 import '@/css/post.scss';
 import { $ } from 'dom7';
 import isEmpty from 'just-is-empty';
-import PageExitPopup from '../../components/page-exit-popup';
+import PageExitPopup from '@/components/page-exit-popup';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser } from '../../js/state/slices/user';
+import pick from 'just-pick';
 
 const PostAddPage = ({ f7router }) => {
+    const dispatch = useDispatch();
     const [isLoadingPhoto, setIsLoadingPhoto] = useState(false);
-    const [post, setPost] = useState({
-        id: utils.genID('post_', false),
+    const { data: currentUser, loading: userLoading } = useSelector(
+        (state) => state.user
+    );
+    console.log({ currentUser, userLoading });
+    const postId = utils.genID(undefined, false);
+    const initialPost = {
+        id: postId,
         text: '',
         photo: '',
         has_recipe: false,
         recipe: {},
-        user: { id: '' },
+        user: {},
         created_at: utils.currentDate.toISOString(),
         updated_at: utils.currentDate.toISOString(),
-    });
+    };
+    const [post, setPost] = useState(initialPost);
+
     const [isEmptyPost, setIsEmptyPost] = useState(false);
     const handleInputClick = async () => {
         $('#photo-input').click();
@@ -80,9 +91,29 @@ const PostAddPage = ({ f7router }) => {
         } else {
             setIsEmptyPost(false);
         }
-        console.log({ post });
+        // console.log({ post: utils.serialize({ ...post }) });
+        // console.log({ post2: utils.deSerialize(utils.serialize({ ...post })) });
     }, [post]);
 
+    async function SubmitPost() {
+        try {
+            const serializedPost = utils.serialize({
+                ...post,
+                user: pick(currentUser, ['$id', 'name', 'prefs']),
+            });
+            console.log(serializedPost);
+
+            const p = await appwriteHandler.databases.createDocument(
+                envConfig.DATABASE_ID,
+                envConfig.POST_COLLECTION_ID,
+                postId,
+                serializedPost
+            );
+            console.log({ p: utils.deSerialize(p) });
+        } catch (e) {
+            console.log('post submit', { e });
+        }
+    }
     const handlePopupClose = (canExit) => {
         if (canExit) {
             handleBackClick();
@@ -102,10 +133,12 @@ const PostAddPage = ({ f7router }) => {
     function handleBackClick() {
         f7router.back();
     }
-
+    useEffect(() => {
+        dispatch(fetchUser());
+    }, [dispatch]);
     return (
-        <Page name="post-add">
-            <Navbar>
+        <Page name="post-add" className="custom-bg">
+            <Navbar outline>
                 {isMobile && (
                     <NavLeft>
                         <Link iconOnly onClick={handleBackClick}>
@@ -116,7 +149,13 @@ const PostAddPage = ({ f7router }) => {
                 <NavTitle title="Your Post" />
                 <NavRight style={{ paddingRight: '1rem' }}>
                     {isMobile && (
-                        <Button fill round style={{ minWidth: '5rem' }}>
+                        <Button
+                            disabled={isEmptyPost}
+                            fill
+                            onClick={() => SubmitPost()}
+                            round
+                            style={{ minWidth: '5rem' }}
+                        >
                             Post
                         </Button>
                     )}

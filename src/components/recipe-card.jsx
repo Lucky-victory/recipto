@@ -57,10 +57,8 @@ const RecipeCard = ({
                             <Button
                                 style={{ maxWidth: '3rem' }}
                                 type="button"
-                                className="link"
                                 round
                                 iconOnly
-                                preventRouter
                             >
                                 <Icon
                                     material="bookmark"

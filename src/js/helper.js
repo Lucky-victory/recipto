@@ -4,14 +4,31 @@ import { v4 } from 'uuid';
 const device = getDevice();
 export const isMobile = device.ios || device.android;
 import UIAvatarSvg from 'ui-avatar-svg';
+import { Preferences } from '@capacitor/preferences';
 export const envConfig = {
     PROJECT_ID: import.meta.env.VITE_APPWRITE_PROJECT_ID,
     BUCKET_ID: import.meta.env.VITE_APPWRITE_BUCKET_ID,
+    DATABASE_ID: import.meta.env.VITE_APPWRITE_DATABASE_ID,
+    POST_COLLECTION_ID: import.meta.env.VITE_APPWRITE_POST_COLLECTION_ID,
+    RECIPE_COLLECTION_ID: import.meta.env.VITE_APPWRITE_RECIPE_COLLECTION_ID,
+    SAVED_RECIPE_COLLECTION_ID: import.meta.env.VITE_APPWRITE_SAVED_RECIPE_ID,
 };
-export const storageKeys={
-    USER:'rt_user'
-}
+export const storageKeys = {
+    USER: 'rt_user',
+};
 class Utils {
+    deSerialize(obj = {}, props = ['user', 'recipe']) {
+        for (const prop of props) {
+            obj[prop] = JSON.parse(JSON.parse(obj[prop]));
+        }
+        return obj;
+    }
+    serialize(obj = {}, props = ['user', 'recipe']) {
+        for (const prop of props) {
+            obj[prop] = JSON.stringify(JSON.stringify(obj[prop]));
+        }
+        return obj;
+    }
     getUserNameInitials(name = '') {
         let initials = '';
         const [fName, lName] = name.split(' ');
@@ -64,3 +81,18 @@ export class AppWriteHandler {
 }
 
 export const appwriteHandler = new AppWriteHandler();
+
+export class AppStorage {
+    static async get(key) {
+        return JSON.parse((await Preferences.get({ key })).value || '{}');
+    }
+    static async set(key, value) {
+        return await Preferences.set({ key, value: JSON.stringify(value) });
+    }
+    static async remove(key) {
+        return await Preferences.remove({ key });
+    }
+    static async clear() {
+        return await Preferences.clear();
+    }
+}
