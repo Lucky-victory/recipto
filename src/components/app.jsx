@@ -15,14 +15,12 @@ import {
 
 import capacitorApp from '../js/capacitor-app';
 import routes from '../js/routes';
-import store from '../js/store';
 import { isMobile } from '../js/helper';
+import { Provider } from 'react-redux';
+import { store } from '../js/state/reducers';
 
 const transition = isMobile ? 'f7-cover' : undefined;
 const MyApp = () => {
-    // Login screen demo data
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
     const device = getDevice();
     // Framework7 Parameters
     const f7params = {
@@ -36,9 +34,6 @@ const MyApp = () => {
             closeByBackdropClick: false,
             backdropUnique: true,
         },
-
-        // App store
-        store: store,
         // App routes
         routes: routes,
 
@@ -60,29 +55,22 @@ const MyApp = () => {
             androidOverlaysWebView: false,
         },
     };
-    const alertLoginData = () => {
-        f7.dialog.alert(
-            'Username: ' + username + '<br>Password: ' + password,
-            () => {
-                f7.loginScreen.close();
-            }
-        );
-    };
+
     f7ready(() => {
         // Init capacitor APIs (see capacitor-app.js)
         if (f7.device.capacitor) {
             capacitorApp.init(f7);
         }
-        // Call F7 APIs here
     });
 
     return (
-        <App {...f7params} style={{ maxWidth: 1200, margin: '0 auto' }}>
-            {/* Left panel with cover effect when hidden */}
-            {/* <Panel left reveal visibleBreakpoint={960}>
+        <Provider store={store}>
+            <App {...f7params} style={{ maxWidth: 1200, margin: '0 auto' }}>
+                {/* Left panel with cover effect when hidden */}
+                {/* <Panel left reveal visibleBreakpoint={960}>
                 <View>
-                    <Page>
-                        <Navbar title="Left Panel" />
+                <Page>
+                <Navbar title="Left Panel" />
 
                         <BlockTitle>Control Main View</BlockTitle>
                         <List>
@@ -110,26 +98,27 @@ const MyApp = () => {
                 </View>
             </Panel> */}
 
-            {/* Right panel with reveal effect
+                {/* Right panel with reveal effect
       <Panel right reveal visibleBreakpoint={700}>
         <View>
           <Page>
             <Navbar title="Right Panel" />
             <Block>Right panel content goes here</Block>
-          </Page>
-        </View>
-      </Panel> */}
+            </Page>
+            </View>
+        </Panel> */}
 
-            {/* Your main view, should have "view-main" class */}
-            <View
-                main
-                className="safe-areas"
-                url="/"
-                browserHistory
-                transition={transition}
-                browserHistorySeparator=""
-            />
-        </App>
+                {/* Your main view, should have "view-main" class */}
+                <View
+                    main
+                    className="safe-areas"
+                    url="/"
+                    browserHistory
+                    transition={transition}
+                    browserHistorySeparator=""
+                />
+            </App>
+        </Provider>
     );
 };
 export default MyApp;

@@ -7,45 +7,71 @@ import {
     ListInput,
     Navbar,
     Page,
+    f7,
 } from 'framework7-react';
 import React, { useState } from 'react';
-import { appwriteHandler, isMobile, utils } from '../js/helper';
+import { appwriteHandler, isMobile, storageKeys, utils } from '../js/helper';
 import '@/css/signin-up.scss';
+import { Preferences } from '@capacitor/preferences';
 const SignInPage = () => {
     const [signUpForm, setSignupForm] = useState({
         fullname: '',
         password: '',
         email: '',
     });
+    const [authType, setAuthType] = useState('email');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleInputChange = (ev) => {
         const { name, value } = ev.target;
         setSignupForm((prev) => ({ ...prev, [name]: value }));
     };
+    appwriteHandler.account.get().then((acc) => console.log({ acc }));
     async function handleFormSubmit(ev) {
         ev.preventDefault();
         setIsSubmitting(true);
         try {
-            // const newUser = await appwriteHandler.account.create(
-            //     utils.genID(),
-            //     signUpForm.email,
-            //     signUpForm.password,
-            //     signUpForm.fullname
-            // );
-            // const tt = await appwriteHandler.account.createEmailSession(
-            //     signUpForm.email,
-            //     signUpForm.password
-            // );
-            const tt = await appwriteHandler.account.createVerification(
-                'http://localhost:5174/verify/'
+            const newUser = await appwriteHandler.account.create(
+                utils.genID(),
+                signUpForm.email,
+                signUpForm.password,
+                signUpForm.fullname
             );
-
-            console.log({ newUser: null, tt });
+            const tt = await appwriteHandler.account.createEmailSession(
+                signUpForm.email,
+                signUpForm.password
+            );
+            // const tt = await appwriteHandler.account.createVerification(
+            //     'http://localhost:5174/verify/'
+            // );
+            await Preferences.set({
+                key: storageKeys.USER,
+                value: JSON.stringify(newUser),
+            });
+            f7.toast.show({
+                position: 'center',
+                text: 'Sign up successful',
+                closeTimeout: 3000,
+            });
+            console.log({ newUser, tt });
             setIsSubmitting(false);
-            ev.target.reset();
+            setSignupForm({ fullname: '', password: '', email: '' });
         } catch (e) {
             setIsSubmitting(false);
             console.log('error', { e });
+        }
+    }
+    function handleGoogleSignUp() {
+        setAuthType('google');
+        setIsSubmitting(true);
+        try {
+            const res = appwriteHandler.account.createOAuth2Session(
+                'google',
+                'http://localhost:5174/signin/'
+            );
+            console.log({ res });
+        } catch (e) {
+            setIsSubmitting(false);
+            console.log('google auth error', { e });
         }
     }
     return (
@@ -59,13 +85,7 @@ const SignInPage = () => {
             <div className="rt-signin-page-inner flex">
                 <Block className="rt-signin-page-banner-wrap">
                     <div className="rt-overlay"></div>
-                    {/* <video
-                        src="https://player.vimeo.com/external/412306034.hd.mp4?s=67a93ffedd18e9e5c46fb05182ac8f4fc423c3cd&profile_id=174&oauth2_token_id=57447761"
-                        muted
-                        autoPlay
-                        loop
-                        className="rt-video"
-                    ></video> */}
+
                     <img
                         src="https://images.pexels.com/photos/4057691/pexels-photo-4057691.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
                         alt=""
@@ -114,7 +134,9 @@ const SignInPage = () => {
                                     fill
                                     disabled={isSubmitting}
                                     preloader
-                                    loading={isSubmitting}
+                                    loading={
+                                        isSubmitting && authType === 'email'
+                                    }
                                 />
                             </Block>
                             <Block
@@ -122,7 +144,16 @@ const SignInPage = () => {
                                 data-text="or"
                             ></Block>
                             <Block>
-                                <Button outline large disabled={isSubmitting}>
+                                <Button
+                                    outline
+                                    large
+                                    preloader
+                                    loading={
+                                        isSubmitting && authType == 'google'
+                                    }
+                                    disabled={isSubmitting}
+                                    onClick={handleGoogleSignUp}
+                                >
                                     <img
                                         className="rt-google-icon"
                                         src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"

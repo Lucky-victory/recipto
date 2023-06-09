@@ -30,63 +30,6 @@
 .rt-tab {
     padding-bottom: 6rem;
 }
-.rt-card {
-}
-.rt-card-header-link {
-    color: inherit;
-
-    border-radius: 8px !important;
-}
-
-.rt-card-header-name {
-    margin-bottom: 0;
-    font-size: 1.1rem;
-}
-.rt-card-content {
-    .rt-card-content-inner {
-        border-radius: 8px;
-        position: relative;
-        flex-direction: column;
-        overflow: hidden;
-        // justify-content: flex-start;
-        width: 100%;
-        align-items: normal;
-        color: inherit;
-        background: rgba(var(--f7-theme-color-rgb), 0.05);
-    }
-    .rt-card-content-footer {
-        border-top: 1px solid #bbb;
-        padding: 0.75rem;
-        font-size: 1.3rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(var(--f7-theme-color-rgb), 0.05);
-    }
-}
-.rt-card-img-wrap {
-    position: relative;
-
-    height: 350px;
-    border-top-left-radius: inherit;
-    border-top-right-radius: inherit;
-    overflow: hidden;
-    .rt-card-img {
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        position: relative;
-        z-index: 3;
-        object-position: left center;
-    }
-}
-
-.rt-card-footer {
-    border-top: 1px solid #ccc;
-    .button {
-        color: grey;
-    }
-}
 
 .rt-single-input-list {
     padding: 0;
@@ -122,12 +65,6 @@
     margin-right: 1rem;
     border-radius: 50%;
 }
-@media all and (max-width: 568px) {
-    .rt-card {
-        margin-left: 0.5rem;
-        margin-right: 0.5rem;
-    }
-    .rt-card-img-wrap {
-        height: 250px;
-    }
+
+.rt-svg-avatar {
 }

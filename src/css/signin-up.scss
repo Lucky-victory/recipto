@@ -10,12 +10,17 @@
 }
 
 .rt-signin-page-inner {
+    .item-label {
+        background-color: var(--card-bg) !important;
+    }
     overflow-y: auto;
 
-    height: calc(100% - var(--f7-navbar-height));
-    margin-top: var(--f7-navbar-height);
+    height: calc(100% + var(--f7-navbar-height));
+    // margin-top: var(--f7-navbar-height);
     width: 100%;
     display: grid;
+    background: var(--card-bg);
+    // var(--f7-page-bg-color)
     grid-template-columns: repeat(2, minmax(250px, 1fr));
     .rt-signin-page-form-wrap,
     .rt-signin-page-banner-wrap {
@@ -27,6 +32,7 @@
         padding: 0;
     }
     .rt-signin-page-form-wrap {
+        background-color: var(--card-bg) !important;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -63,7 +69,6 @@
             margin: auto 0.625rem;
 
             border-radius: 1rem;
-            background: var(--f7-md-surface);
         }
     }
 }

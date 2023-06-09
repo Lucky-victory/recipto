@@ -14,17 +14,55 @@ import SignInPage from '../pages/signin.jsx';
 import SignupPage from '../pages/signup.jsx';
 import OnboardingPage from '../pages/onboarding.jsx';
 import VerifyUserPage from '../pages/verify.jsx';
+import { appwriteHandler, storageKeys } from './helper.js';
+import { Preferences } from '@capacitor/preferences';
+import RecipeViewPage from '../pages/recipe/view.jsx';
+import PostViewPage from '../pages/post/view.jsx';
 
 const device = getDevice();
 
 const isMobile = device.ios || device.android;
 const transition = isMobile ? 'f7-cover' : undefined;
 function checkAuth({ to, from, resolve, reject }) {
-    if (/* some condition to check user is logged in */ 1) {
-        resolve();
-    } else {
-        reject();
-    }
+    console.log({ to, from });
+    Preferences.get({ key: storageKeys.USER }).then(({ value }) => {
+        const user = JSON.parse(value);
+        if (user) {
+            resolve();
+        } else {
+            reject();
+        }
+    });
+}
+function checkGuest({ to, from, resolve, reject }) {
+    Preferences.get({ key: storageKeys.USER })
+        .then(({ value }) => {
+            const user = JSON.parse(value);
+            console.log({ user });
+            if (!user) {
+                resolve();
+            } else {
+                reject();
+            }
+        })
+        .catch((e) => {
+            console.log('error before enter', { e });
+        });
+}
+function checkGuestRedirect({ to, resolve, reject }) {
+    Preferences.get({ key: storageKeys.USER })
+        .then(({ value }) => {
+            const user = JSON.parse(value);
+
+            if (!user) {
+                resolve('/signin/');
+            } else {
+                resolve('/home/');
+            }
+        })
+        .catch((e) => {
+            console.log('error redirect', { e });
+        });
 }
 function checkPermission({ to, from, resolve, reject }) {
     if (/* some condition to check user edit permission */ 1) {
@@ -33,28 +71,34 @@ function checkPermission({ to, from, resolve, reject }) {
         reject();
     }
 }
-function beforeLeave({ to, resolve, reject }) {
-    if (to.path !== '/recipe/add') {
-        f7.dialog.confirm(
-            'Are you sure you want to leave this page without saving data?',
-            function () {
-                // proceed navigation
-                resolve();
-            },
-            function () {
-                // stay on page
-                reject();
-            }
-        );
-    } else {
-        resolve();
-    }
-}
+// function beforeLeave({ to, resolve, reject }) {
+//     if (to.path !== '/recipe/add') {
+//         f7.dialog.confirm(
+//             'Are you sure you want to leave this page without saving data?',
+//             function () {
+//                 // proceed navigation
+//                 resolve();
+//             },
+//             function () {
+//                 // stay on page
+//                 reject();
+//             }
+//         );
+//     } else {
+//         resolve();
+//     }
+// }
 
 const routes = [
     {
-        path: '/',
+        path: '/home/',
         component: HomePage,
+
+        // beforeEnter: checkAuth,
+    },
+    {
+        path: '/',
+        redirect: checkGuestRedirect,
     },
     {
         path: '/about/',
@@ -64,10 +108,13 @@ const routes = [
         alias: ['/join/', '/login/'],
         path: '/signin/',
         component: SignInPage,
+        // beforeEnter: checkGuest,
+        // redirect: checkGuestRedirect,
     },
     {
         alias: '/register/',
-        path: '/signin/',
+        path: '/signup/',
+        // beforeEnter: checkGuest,
         component: SignupPage,
     },
     {
@@ -82,22 +129,33 @@ const routes = [
     {
         path: '/recipe/',
         component: NewRecipePage,
+        beforeEnter: checkAuth,
         routes: [
             {
                 path: '/add',
                 component: RecipeAddPage,
-                beforeLeave,
+            },
+            {
+                path: '/view/:id',
+                component: RecipeViewPage,
             },
         ],
     },
     {
         path: '/post/',
         component: NewPostPage,
+        beforeEnter: checkAuth,
+
         routes: [
             {
                 path: '/add',
 
                 component: PostAddPage,
+            },
+            {
+                path: '/view/:id',
+
+                component: PostViewPage,
             },
         ],
     },
