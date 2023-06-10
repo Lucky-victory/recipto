@@ -32,7 +32,7 @@ class Utils {
     getUserNameInitials(name = '') {
         let initials = '';
         const [fName, lName] = name.split(' ');
-        console.log({ lName, fName });
+
         if (fName?.length && lName?.length) {
             initials = (fName.charAt(0) + lName.charAt(0)).toUpperCase();
         } else {

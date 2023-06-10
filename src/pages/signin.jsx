@@ -13,19 +13,20 @@ import React, { useState } from 'react';
 import { appwriteHandler, isMobile, storageKeys, utils } from '../js/helper';
 import '@/css/signin-up.scss';
 import { Preferences } from '@capacitor/preferences';
-const SignInPage = () => {
-    const [signUpForm, setSignupForm] = useState({
+const SignInPage = ({ f7router }) => {
+    const initialForm = {
         fullname: '',
         password: '',
         email: '',
-    });
+    };
+    const [signUpForm, setSignupForm] = useState(initialForm);
     const [authType, setAuthType] = useState('email');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleInputChange = (ev) => {
         const { name, value } = ev.target;
         setSignupForm((prev) => ({ ...prev, [name]: value }));
     };
-    appwriteHandler.account.get().then((acc) => console.log({ acc }));
+
     async function handleFormSubmit(ev) {
         ev.preventDefault();
         setIsSubmitting(true);
@@ -48,13 +49,16 @@ const SignInPage = () => {
                 value: JSON.stringify(newUser),
             });
             f7.toast.show({
-                position: 'center',
+                position: 'top',
                 text: 'Sign up successful',
-                closeTimeout: 3000,
+                closeTimeout: 2000,
             });
+            setTimeout(() => {
+                f7router.navigate('/', { reloadPrevious: true });
+            }, 2000);
             console.log({ newUser, tt });
             setIsSubmitting(false);
-            setSignupForm({ fullname: '', password: '', email: '' });
+            setSignupForm(initialForm);
         } catch (e) {
             setIsSubmitting(false);
             console.log('error', { e });
@@ -66,7 +70,7 @@ const SignInPage = () => {
         try {
             const res = appwriteHandler.account.createOAuth2Session(
                 'google',
-                'http://localhost:5174/signin/'
+                location.origin
             );
             console.log({ res });
         } catch (e) {

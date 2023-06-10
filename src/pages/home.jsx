@@ -21,7 +21,7 @@ import PostCard from '@/components/post-card';
 import { isMobile } from '@/js/helper';
 import { appwriteHandler, utils } from '../js/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser, updateUser } from '../js/state/slices/user';
+import { dropUser, fetchUser, updateUser } from '../js/state/slices/user';
 import Avatar from '../components/avatar';
 import RecipeCard from '../components/recipe-card';
 import { fetchAllPosts } from '../js/state/slices/post';
@@ -122,7 +122,8 @@ const HomePage = ({ f7router }) => {
         });
     }
     function logout() {
-        appwriteHandler.account.deleteSessions();
+        dispatch(dropUser());
+        f7router.navigate('/signin/', { reloadPrevious: true });
     }
     console.log({ allPosts });
     useEffect(() => {
@@ -145,6 +146,7 @@ const HomePage = ({ f7router }) => {
                     <Link tabLink="#community-tab">Communities</Link>
                 </Toolbar>
                 <div className="flex jc-center mt-a mb-a">
+                    <Button text="log" onClick={() => logout()} />
                     <Avatar link={'/about/'} user={currentUser} />
                 </div>
             </div>

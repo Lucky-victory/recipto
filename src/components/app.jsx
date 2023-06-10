@@ -114,6 +114,8 @@ const MyApp = () => {
                     className="safe-areas"
                     url="/"
                     browserHistory
+                    browserHistoryOnLoad
+                    loadInitialPage
                     transition={transition}
                     browserHistorySeparator=""
                 />

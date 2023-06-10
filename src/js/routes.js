@@ -25,14 +25,20 @@ const isMobile = device.ios || device.android;
 const transition = isMobile ? 'f7-cover' : undefined;
 function checkAuth({ to, from, resolve, reject }) {
     console.log({ to, from });
-    Preferences.get({ key: storageKeys.USER }).then(({ value }) => {
-        const user = JSON.parse(value);
-        if (user) {
+    appwriteHandler.account
+        .get()
+        .then((user) => {
+            console.log({ user });
+            if (!user) {
+                resolve();
+            } else {
+                reject();
+            }
+        })
+        .catch((e) => {
             resolve();
-        } else {
-            reject();
-        }
-    });
+            console.log('error redirect', { e });
+        });
 }
 function checkGuest({ to, from, resolve, reject }) {
     Preferences.get({ key: storageKeys.USER })
@@ -50,13 +56,9 @@ function checkGuest({ to, from, resolve, reject }) {
         });
 }
 function checkGuestRedirect({ to, resolve, reject }) {
-    appwriteHandler.account.listSessions().then((sess) => {
-        console.log(sess);
-    });
-    Preferences.get({ key: storageKeys.USER })
-        .then(({ value }) => {
-            const user = JSON.parse(value);
-
+    appwriteHandler.account
+        .get()
+        .then((user) => {
             if (!user) {
                 resolve('/signin/');
             } else {
@@ -64,6 +66,7 @@ function checkGuestRedirect({ to, resolve, reject }) {
             }
         })
         .catch((e) => {
+            resolve('/signin/');
             console.log('error redirect', { e });
         });
 }
@@ -111,7 +114,10 @@ const routes = [
         alias: ['/join/', '/login/'],
         path: '/signin/',
         component: SignInPage,
-        // beforeEnter: checkGuest,
+        beforeEnter: checkAuth,
+        on: {
+            pageBeforeIn: checkAuth,
+        },
         // redirect: checkGuestRedirect,
     },
     {
