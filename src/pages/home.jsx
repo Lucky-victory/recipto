@@ -23,14 +23,21 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser, updateUser } from '../js/state/slices/user';
 import Avatar from '../components/avatar';
 import RecipeCard from '../components/recipe-card';
+import { fetchAllPosts } from '../js/state/slices/post';
 const HomePage = ({ f7router }) => {
     const dispatch = useDispatch();
     const [isSheetOpen, setIsSheetOpen] = useState(false);
     const { data: currentUser, loading: userLoading } = useSelector(
         (state) => state.user
     );
+    const { data: allPosts, loading: postLoading } = useSelector(
+        (state) => state.post
+    );
     const fetchUserCb = useCallback(() => {
         dispatch(fetchUser());
+    }, []);
+    const fetchAllPostsCb = useCallback(() => {
+        dispatch(fetchAllPosts());
     }, []);
     const [activeTab, setActiveTab] = useState('feed');
     const showSheetOrModal = (evt) => {
@@ -122,8 +129,10 @@ const HomePage = ({ f7router }) => {
     function logout() {
         appwriteHandler.account.deleteSessions();
     }
+    console.log({ allPosts });
     useEffect(() => {
         fetchUserCb();
+        fetchAllPostsCb();
     }, [dispatch]);
     return (
         <Page name="home" pageContent={false} noNavbar>
@@ -202,9 +211,10 @@ const HomePage = ({ f7router }) => {
                             canShowHeader
                         />
                     ))}
-                    {posts.map((post, index) => {
-                        return <PostCard key={index} post={post} />;
-                    })}
+                    {!postLoading &&
+                        allPosts.map((post, index) => {
+                            return <PostCard key={index} post={post} />;
+                        })}
 
                     {isMobile && (
                         <Sheet

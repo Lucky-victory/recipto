@@ -18,7 +18,7 @@ const PostCardHeader = ({ recipeOrPost }) => {
                         </div>
                         <div className="text-grey text-sm">
                             {formatDistanceToNowStrict(
-                                recipeOrPost?.created_at
+                                new Date(recipeOrPost?.created_at)
                             )}{' '}
                             ago
                         </div>
