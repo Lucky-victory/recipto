@@ -6,9 +6,9 @@ import {
     storageKeys,
     utils,
 } from '../../helper';
-
+import { Query } from 'appwrite';
 const initialState = {
-    data: null,
+    data: [],
     loading: false,
     error: null,
 };
@@ -18,7 +18,8 @@ export const fetchAllPosts = createAsyncThunk(
         try {
             const resp = await appwriteHandler.databases.listDocuments(
                 envConfig.DATABASE_ID,
-                envConfig.POST_COLLECTION_ID
+                envConfig.POST_COLLECTION_ID,
+                [Query.orderDesc('created_at')]
             );
             return resp;
         } catch (e) {

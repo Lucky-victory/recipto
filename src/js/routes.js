@@ -50,6 +50,9 @@ function checkGuest({ to, from, resolve, reject }) {
         });
 }
 function checkGuestRedirect({ to, resolve, reject }) {
+    appwriteHandler.account.listSessions().then((sess) => {
+        console.log(sess);
+    });
     Preferences.get({ key: storageKeys.USER })
         .then(({ value }) => {
             const user = JSON.parse(value);

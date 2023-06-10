@@ -13,6 +13,7 @@ import {
     Fab,
     Sheet,
     ListInput,
+    SkeletonAvatar,
 } from 'framework7-react';
 
 import '@/css/home.scss';
@@ -24,6 +25,7 @@ import { fetchUser, updateUser } from '../js/state/slices/user';
 import Avatar from '../components/avatar';
 import RecipeCard from '../components/recipe-card';
 import { fetchAllPosts } from '../js/state/slices/post';
+import PostSkeleton from '../components/post-skeleton';
 const HomePage = ({ f7router }) => {
     const dispatch = useDispatch();
     const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -44,13 +46,6 @@ const HomePage = ({ f7router }) => {
         setIsSheetOpen(true);
     };
 
-    useEffect(() => {
-        // appwriteHandler.account.get().then((u) => {
-        //     dispatch(updateUser(u));
-        //     setCurrentUser(u);
-        //     console.log({ currentUser });
-        // });
-    }, []);
     const posts = [
         {
             text: 'I just joined this site',
@@ -135,7 +130,12 @@ const HomePage = ({ f7router }) => {
         fetchAllPostsCb();
     }, [dispatch]);
     return (
-        <Page name="home" pageContent={false} noNavbar>
+        <Page
+            name="home"
+            onPageAfterIn={() => fetchAllPostsCb()}
+            pageContent={false}
+            noNavbar
+        >
             {/* Toolbar */}
             <div className=" rt-toolbar-wrap">
                 <Toolbar top tabbar className="rt-toolbar">
@@ -166,23 +166,19 @@ const HomePage = ({ f7router }) => {
                                     className="rt-input"
                                     placeholder="What are you cooking today?"
                                 >
-                                    <div
-                                        slot="media"
-                                        className="rt-avatar-wrap"
-                                    >
-                                        <img
-                                            src="https://randomuser.me/api/portraits/men/40.jpg"
-                                            alt=""
-                                            className="rt-avatar"
+                                    {userLoading ? (
+                                        <SkeletonAvatar
+                                            slot="media"
+                                            effect="fade"
+                                            size={44}
                                         />
-                                    </div>
-
-                                    <Button round slot="content">
-                                        <Icon
-                                            material="add_a_photo"
-                                            className="material-symbols-rounded"
+                                    ) : (
+                                        <Avatar
+                                            slot="media"
+                                            user={currentUser}
+                                            link={'/about/'}
                                         />
-                                    </Button>
+                                    )}
                                 </ListInput>
                                 <Block className="mt-0">
                                     <div className="flex">
@@ -202,7 +198,7 @@ const HomePage = ({ f7router }) => {
                             </List>
                         </Block>
                     )}
-                    {recipes.map((recipe) => (
+                    {/* {recipes.map((recipe) => (
                         <RecipeCard
                             recipe={recipe}
                             key={crypto.randomUUID()}
@@ -210,50 +206,48 @@ const HomePage = ({ f7router }) => {
                             canShowActionBtns
                             canShowHeader
                         />
-                    ))}
-                    {!postLoading &&
-                        allPosts.map((post, index) => {
-                            return <PostCard key={index} post={post} />;
-                        })}
+                    ))} */}
+                    {postLoading && !allPosts?.length > 0
+                        ? [1, 2, 3, 4, 5].map((skel) => (
+                              <PostSkeleton key={crypto.randomUUID()} />
+                          ))
+                        : allPosts.map((post, index) => {
+                              return (
+                                  <PostCard
+                                      key={crypto.randomUUID()}
+                                      post={post}
+                                  />
+                              );
+                          })}
 
-                    {isMobile && (
-                        <Sheet
-                            style={{ maxHeight: 200 }}
-                            opened={isSheetOpen}
-                            onSheetClosed={() => setIsSheetOpen(false)}
-                            swipeToClose
-                        >
-                            <Block>
-                                <List noChevron>
-                                    <ListItem
-                                        link="/post/add/"
-                                        sheetClose
-                                        openIn={!isMobile ? 'popup' : null}
-                                    >
-                                        <Icon
-                                            className="material-symbols-rounded"
-                                            material="post_add"
-                                            slot="media"
-                                        />
-                                        Create Post
-                                    </ListItem>
+                    <Sheet
+                        style={{ maxHeight: 200 }}
+                        opened={isSheetOpen}
+                        onSheetClosed={() => setIsSheetOpen(false)}
+                        swipeToClose
+                    >
+                        <Block>
+                            <List noChevron>
+                                <ListItem link="/post/add/" sheetClose>
+                                    <Icon
+                                        className="material-symbols-rounded"
+                                        material="post_add"
+                                        slot="media"
+                                    />
+                                    Create Post
+                                </ListItem>
 
-                                    <ListItem
-                                        openIn={!isMobile ? 'popup' : null}
-                                        link="/recipe/add"
-                                        sheetClose
-                                    >
-                                        <Icon
-                                            className="material-symbols-rounded"
-                                            material="add_circle"
-                                            slot="media"
-                                        />
-                                        Create Recipe
-                                    </ListItem>
-                                </List>
-                            </Block>
-                        </Sheet>
-                    )}
+                                <ListItem link="/recipe/add" sheetClose>
+                                    <Icon
+                                        className="material-symbols-rounded"
+                                        material="add_circle"
+                                        slot="media"
+                                    />
+                                    Create Recipe
+                                </ListItem>
+                            </List>
+                        </Block>
+                    </Sheet>
                 </Tab>
                 <Tab
                     onTabShow={() => handleTabShow('community')}
