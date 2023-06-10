@@ -14,7 +14,7 @@ import SignInPage from '../pages/signin.jsx';
 import SignupPage from '../pages/signup.jsx';
 import OnboardingPage from '../pages/onboarding.jsx';
 import VerifyUserPage from '../pages/verify.jsx';
-import { appwriteHandler, storageKeys } from './helper.js';
+import { AppStorage, appwriteHandler, storageKeys } from './helper.js';
 import { Preferences } from '@capacitor/preferences';
 import RecipeViewPage from '../pages/recipe/view.jsx';
 import PostViewPage from '../pages/post/view.jsx';
@@ -23,8 +23,24 @@ const device = getDevice();
 
 const isMobile = device.ios || device.android;
 const transition = isMobile ? 'f7-cover' : undefined;
-function checkAuth({ to, from, resolve, reject }) {
-    console.log({ to, from });
+function checkAuth(ev, page) {
+    // console.log({ ev, page });
+    // AppStorage.get(storageKeys.USER)
+    //     .then((user) => {
+    //         console.log({ user });
+    //         if (!Object.keys(user).length) {
+    //         ('/signin/');
+    //         } else {
+    //             ev.resolve('/home/');
+    //         }
+    //     })
+    //     .catch((e) => {
+    //         ev.resolve('/signin/');
+    //         console.log('error redirect', { e });
+    //     });
+}
+function checkGuest({ to, resolve, reject }) {
+    // console.log({ event, page });
     appwriteHandler.account
         .get()
         .then((user) => {
@@ -37,22 +53,7 @@ function checkAuth({ to, from, resolve, reject }) {
         })
         .catch((e) => {
             resolve();
-            console.log('error redirect', { e });
-        });
-}
-function checkGuest({ to, from, resolve, reject }) {
-    Preferences.get({ key: storageKeys.USER })
-        .then(({ value }) => {
-            const user = JSON.parse(value);
-            console.log({ user });
-            if (!user) {
-                resolve();
-            } else {
-                reject();
-            }
-        })
-        .catch((e) => {
-            console.log('error before enter', { e });
+            console.log('error guest page', { e });
         });
 }
 function checkGuestRedirect({ to, resolve, reject }) {
@@ -98,7 +99,7 @@ function checkPermission({ to, from, resolve, reject }) {
 const routes = [
     {
         path: '/home/',
-        component: HomePage,
+        asyncComponent: () => import('../pages/home.jsx'),
 
         // beforeEnter: checkAuth,
     },
@@ -114,11 +115,7 @@ const routes = [
         alias: ['/join/', '/login/'],
         path: '/signin/',
         component: SignInPage,
-        beforeEnter: checkAuth,
-        on: {
-            pageBeforeIn: checkAuth,
-        },
-        // redirect: checkGuestRedirect,
+        beforeEnter: checkGuest,
     },
     {
         alias: '/register/',
@@ -138,7 +135,7 @@ const routes = [
     {
         path: '/recipe/',
         component: NewRecipePage,
-        beforeEnter: checkAuth,
+
         routes: [
             {
                 path: '/add',
@@ -153,7 +150,6 @@ const routes = [
     {
         path: '/post/',
         component: NewPostPage,
-        beforeEnter: checkAuth,
 
         routes: [
             {

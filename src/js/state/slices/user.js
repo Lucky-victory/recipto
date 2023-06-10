@@ -11,7 +11,7 @@ export const fetchUser = createAsyncThunk('user/fetchUser', async () => {
         const resp = await appwriteHandler.account.get();
         return resp;
     } catch (e) {
-        throw e;
+        console.log({ e });
     }
 });
 export const dropUser = createAsyncThunk('user/removeUser', async () => {
@@ -19,7 +19,7 @@ export const dropUser = createAsyncThunk('user/removeUser', async () => {
         const resp = await appwriteHandler.account.deleteSessions();
         return resp;
     } catch (e) {
-        throw e;
+        console.log(e);
     }
 });
 export const userSlice = createSlice({
@@ -46,6 +46,7 @@ export const userSlice = createSlice({
             .addCase(fetchUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.data = action.payload;
+                AppStorage.set(storageKeys.USER, action.payload);
             })
             .addCase(fetchUser.rejected, (state) => {
                 state.loading = false;
@@ -53,6 +54,7 @@ export const userSlice = createSlice({
             .addCase(dropUser.fulfilled, (state) => {
                 state.loading = false;
                 state.data = null;
+                AppStorage.remove(storageKeys.USER);
             });
     },
 });

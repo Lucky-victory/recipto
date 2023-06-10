@@ -9,16 +9,31 @@ import {
     Page,
     f7,
 } from 'framework7-react';
-import React, { useState } from 'react';
-import { appwriteHandler, isMobile, storageKeys, utils } from '../js/helper';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+    AppStorage,
+    appwriteHandler,
+    isMobile,
+    storageKeys,
+    utils,
+} from '../js/helper';
 import '@/css/signin-up.scss';
 import { Preferences } from '@capacitor/preferences';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUser, updateUser } from '../js/state/slices/user';
 const SignInPage = ({ f7router }) => {
     const initialForm = {
         fullname: '',
         password: '',
         email: '',
     };
+    const dispatch = useDispatch();
+    // const fetchUserCb = useCallback(() => {
+    //     dispatch(fetchUser());
+    // }, []);
+    // const { data: currentUser, loading: userLoading } = useSelector(
+    //     (state) => state.user
+    // );
     const [signUpForm, setSignupForm] = useState(initialForm);
     const [authType, setAuthType] = useState('email');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,6 +52,7 @@ const SignInPage = ({ f7router }) => {
                 signUpForm.password,
                 signUpForm.fullname
             );
+            dispatch(updateUser(newUser));
             const tt = await appwriteHandler.account.createEmailSession(
                 signUpForm.email,
                 signUpForm.password
@@ -44,19 +60,16 @@ const SignInPage = ({ f7router }) => {
             // const tt = await appwriteHandler.account.createVerification(
             //     'http://localhost:5174/verify/'
             // );
-            await Preferences.set({
-                key: storageKeys.USER,
-                value: JSON.stringify(newUser),
-            });
+
             f7.toast.show({
                 position: 'top',
                 text: 'Sign up successful',
                 closeTimeout: 2000,
             });
-            setTimeout(() => {
-                f7router.navigate('/', { reloadPrevious: true });
-            }, 2000);
-            console.log({ newUser, tt });
+
+            f7router.navigate('/home/', { clearPreviousHistory: true });
+
+            // console.log({ newUser, tt });
             setIsSubmitting(false);
             setSignupForm(initialForm);
         } catch (e) {
@@ -72,18 +85,34 @@ const SignInPage = ({ f7router }) => {
                 'google',
                 location.origin
             );
+            // f7.toast.show({
+            //     position: 'top',
+            //     text: 'Sign up successful',
+            //     closeTimeout: 2000,
+            // });
             console.log({ res });
         } catch (e) {
             setIsSubmitting(false);
             console.log('google auth error', { e });
         }
     }
+    function onPageBeforeIn() {
+        // if (currentUser) {
+        //     f7router.navigate('/home/');
+        // }
+        // console.log({ currentUser });
+    }
+    useEffect(() => {
+        // fetchUserCb();
+        // dispatch(fetchUser());
+    }, []);
     return (
         <Page
             name="signin"
             className="rt-signin-page"
             noToolbar
             noNavbar={!isMobile}
+            onPageBeforeIn={onPageBeforeIn}
         >
             <Navbar className="rt-navbar" backLink={isMobile} />
             <div className="rt-signin-page-inner flex">

@@ -46,55 +46,6 @@ const HomePage = ({ f7router }) => {
         setIsSheetOpen(true);
     };
 
-    const posts = [
-        {
-            text: 'I just joined this site',
-            id: 'post-1',
-            user: {
-                username: 'benlucky',
-                name: 'Ben Lucky',
-                prefs: {
-                    avatar: 'https://randomuser.me/api/portraits/men/40.jpg',
-                },
-            },
-            created_at: 1685621640517,
-            updated_at: '',
-            has_recipe: true,
-            recipe: {
-                id: 'rp-1',
-                title: 'My first recipe',
-                slug: 'my-recipe-123',
-                photo: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?auto=compress&cs=tinysrgb&w=600',
-            },
-            photo: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?auto=compress&cs=tinysrgb&w=600',
-
-            likes_count: 10,
-            comments_count: 15,
-        },
-        {
-            text: 'I just joined this site',
-            id: 'post-1',
-            user: {
-                username: 'luckyvictory',
-                name: 'Lucky Victory',
-                prefs: {
-                    avatar: 'https://randomuser.me/api/portraits/men/49.jpg',
-                },
-            },
-            created_at: 1686269779643,
-            updated_at: '',
-            has_recipe: false,
-            recipe: {
-                id: 'rp-2',
-                title: 'My Second recipe',
-                slug: 'my-recipe-123',
-                photo: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?auto=compress&cs=tinysrgb&w=600',
-            },
-            photo: 'https://images.pexels.com/photos/2097090/pexels-photo-2097090.jpeg?auto=compress&cs=tinysrgb&w=600',
-            likes_count: 10,
-            comments_count: 15,
-        },
-    ];
     const recipes = [
         {
             likes_count: 10,
@@ -123,7 +74,7 @@ const HomePage = ({ f7router }) => {
     }
     function logout() {
         dispatch(dropUser());
-        f7router.navigate('/signin/', { reloadPrevious: true });
+        f7router.navigate('/signin/', { reloadPrevious: true,clearPreviousHistory:true });
     }
     console.log({ allPosts });
     useEffect(() => {
