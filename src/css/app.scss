@@ -61,6 +61,7 @@
 }
 .popup {
     &.page-exit-popup {
+        --f7-popup-border-radius: var(--rt-radius-md);
         --f7-safe-area-top: 0px;
         --f7-safe-area-bottom: 0px;
         --f7-popup-tablet-width: 300px;
@@ -68,6 +69,19 @@
         max-width: 300px;
         max-height: 250px;
         align-self: center;
+    }
+}
+@media all and (max-width: 658px) {
+    .popup {
+        &.page-exit-popup {
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 250px;
+        }
+        &.modal-in {
+            transform: translate(-50%, -50%);
+        }
     }
 }
 .rt-btn-plain {
@@ -190,7 +204,6 @@ Global styles
         }
     }
 }
-
 
 :root {
     --f7-md-surface: #f0f0ee !important;

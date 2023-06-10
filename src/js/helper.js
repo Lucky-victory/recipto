@@ -45,6 +45,7 @@ class Utils {
             .text(this.getUserNameInitials(name))
             .size(42)
             .round(true)
+            .fontWeight(600)
             .bgColor('var(--f7-ios-surface-2)')
             .generate();
         return svg;

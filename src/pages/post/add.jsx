@@ -34,22 +34,22 @@ const PostAddPage = ({ f7router }) => {
     console.log({ currentUser, userLoading });
     const postId = utils.genID(undefined, false);
     const initialPost = {
-        id: postId,
         text: '',
         photo: '',
         has_recipe: false,
         recipe: {},
         user: {},
-        created_at: utils.currentDate.toISOString(),
-        updated_at: utils.currentDate.toISOString(),
+        created_at: '',
+        updated_at: '',
     };
     const [post, setPost] = useState(initialPost);
 
     const [isEmptyPost, setIsEmptyPost] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const handleInputClick = async () => {
         $('#photo-input').click();
     };
-    const [photoPreview, setPhotoPreview] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState('');
     const handlePhotoSelect = async (ev) => {
         /**
          * @type {Array<FileList>}
@@ -57,7 +57,7 @@ const PostAddPage = ({ f7router }) => {
         const files = ev.target.files;
         if (files.length > 0) {
             setIsLoadingPhoto(true);
-            setPhotoPreview(null);
+            setPhotoPreview('');
             const fileId = utils.genID();
             const bucketId = envConfig.BUCKET_ID || '647caba948df689017b0';
             appwriteHandler.storage
@@ -97,8 +97,13 @@ const PostAddPage = ({ f7router }) => {
 
     async function SubmitPost() {
         try {
+            setIsSubmitting(true);
             const serializedPost = utils.serialize({
                 ...post,
+                id: postId,
+                photo: photoPreview,
+                created_at: utils.currentDate.toISOString(),
+                updated_at: utils.currentDate.toISOString(),
                 user: pick(currentUser, ['$id', 'name', 'prefs']),
             });
             console.log(serializedPost);
@@ -109,10 +114,31 @@ const PostAddPage = ({ f7router }) => {
                 postId,
                 serializedPost
             );
+            f7.toast.show({
+                text: 'Post added successfully',
+                closeButton: true,
+                closeTimeout: 3000,
+                position: 'top',
+            });
+            setIsSubmitting(false);
+            setPost(initialPost);
+            setPhotoPreview('');
+            setTimeout(() => {
+                redirectAfterPosting();
+            }, 3500);
             console.log({ p: utils.deSerialize(p) });
         } catch (e) {
+            setIsSubmitting(false);
+
             console.log('post submit', { e });
         }
+    }
+    function redirectAfterPosting() {
+        f7.popup.close();
+        f7router.navigate('/home/', {
+            direction: 'backward',
+            clearPreviousHistory: true,
+        });
     }
     const handlePopupClose = (canExit) => {
         if (canExit) {
@@ -128,6 +154,10 @@ const PostAddPage = ({ f7router }) => {
             f7.popup.open('#page-exit-popup');
         } else {
             f7.popup.close();
+            if (isMobile) {
+                f7.popup.close('#page-exit-popup');
+                handleBackClick();
+            }
         }
     }
     function handleBackClick() {
@@ -141,7 +171,7 @@ const PostAddPage = ({ f7router }) => {
             <Navbar outline>
                 {isMobile && (
                     <NavLeft>
-                        <Link iconOnly onClick={handleBackClick}>
+                        <Link iconOnly onClick={() => handlePopupOpen()}>
                             <Icon className="icon-back" />
                         </Link>
                     </NavLeft>
@@ -150,7 +180,9 @@ const PostAddPage = ({ f7router }) => {
                 <NavRight style={{ paddingRight: '1rem' }}>
                     {isMobile && (
                         <Button
-                            disabled={isEmptyPost}
+                            disabled={isEmptyPost || isSubmitting}
+                            preloader
+                            loading={isSubmitting}
                             fill
                             onClick={() => SubmitPost()}
                             round
@@ -251,9 +283,12 @@ const PostAddPage = ({ f7router }) => {
                 {!isMobile && (
                     <Block>
                         <Button
-                            disabled={isEmptyPost}
+                            disabled={isEmptyPost || isSubmitting}
+                            preloader
+                            loading={isSubmitting}
                             fill
                             style={{ width: '7rem', fontSize: 18 }}
+                            onClick={() => SubmitPost()}
                         >
                             Post
                         </Button>

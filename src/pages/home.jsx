@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
     Page,
     Link,
@@ -20,14 +20,19 @@ import PostCard from '@/components/post-card';
 import { isMobile } from '@/js/helper';
 import { appwriteHandler, utils } from '../js/helper';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateUser } from '../js/state/slices/user';
+import { fetchUser, updateUser } from '../js/state/slices/user';
 import Avatar from '../components/avatar';
 import RecipeCard from '../components/recipe-card';
 const HomePage = ({ f7router }) => {
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
-    const userState = useSelector((state) => state.user.value);
     const dispatch = useDispatch();
-    const [currentUser, setCurrentUser] = useState(userState);
+    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    const { data: currentUser, loading: userLoading } = useSelector(
+        (state) => state.user
+    );
+    const fetchUserCb = useCallback(() => {
+        dispatch(fetchUser());
+    }, []);
+    const [activeTab, setActiveTab] = useState('feed');
     const showSheetOrModal = (evt) => {
         setIsSheetOpen(true);
     };
@@ -106,6 +111,9 @@ const HomePage = ({ f7router }) => {
             photo: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?auto=compress&cs=tinysrgb&w=600',
         },
     ];
+    function handleTabShow(tab) {
+        setActiveTab(tab);
+    }
     function showRecipeAddPage() {
         f7router.navigate('/recipe/add', {
             openIn: !isMobile ? 'popup' : null,
@@ -114,6 +122,9 @@ const HomePage = ({ f7router }) => {
     function logout() {
         appwriteHandler.account.deleteSessions();
     }
+    useEffect(() => {
+        fetchUserCb();
+    }, [dispatch]);
     return (
         <Page name="home" pageContent={false} noNavbar>
             {/* Toolbar */}
@@ -130,7 +141,12 @@ const HomePage = ({ f7router }) => {
             </div>
             {/* Page content */}
             <Tabs swipeable={isMobile}>
-                <Tab tabActive id="feed-tab" className="rt-tab page-content">
+                <Tab
+                    onTabShow={() => handleTabShow('feed')}
+                    tabActive
+                    id="feed-tab"
+                    className="rt-tab page-content"
+                >
                     {!isMobile && (
                         <Block>
                             <List mediaList className="rt-single-input-list">
@@ -229,11 +245,15 @@ const HomePage = ({ f7router }) => {
                         </Sheet>
                     )}
                 </Tab>
-                <Tab id="community-tab" className="rt-tab page-content">
+                <Tab
+                    onTabShow={() => handleTabShow('community')}
+                    id="community-tab"
+                    className="rt-tab page-content"
+                >
                     <Block>Tab 2</Block>
                 </Tab>
             </Tabs>
-            {isMobile && (
+            {isMobile && activeTab === 'feed' && (
                 <Fab slot="fixed" className="rt-fab" onClick={showSheetOrModal}>
                     <Icon material="add" className="material-symbols-rounded" />
                 </Fab>
