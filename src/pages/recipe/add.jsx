@@ -20,20 +20,34 @@ import React, { useEffect, useState } from 'react';
 import isEmpty from 'just-is-empty';
 import { isMobile } from '@/js/helper';
 import PageExitPopup from '../../components/page-exit-popup';
+import TimeSheet from '../../components/time-sheet';
 
 const $$ = Dom7;
 const RecipeAddPage = ({ f7router }) => {
     const [ingredients, setIngredients] = useState([
-        { header: '', content: [{ media: '', text: '' }] },
+        { header: '', content: [] },
     ]);
     const [currentIngredIndex, setCurrentIngredIndex] = useState(0);
     const [editIndex, setEditIndex] = useState(null);
+    const [prepTimeValue, setPrepTimeValue] = useState({
+        hours: 0,
+        minutes: 0,
+    });
+    const [cookTimeValue, setCookTimeValue] = useState({
+        hours: 0,
+        minutes: 0,
+    });
+    const [initialTimeValue, setInitialTimeValue] = useState({
+        hours: 0,
+        minutes: 0,
+    });
+    const [timeSheetType, setTimeSheetType] = useState('');
+    const [timeSheetClassName, setTimeSheetClassName] = useState('');
 
+    const [convertedPrepTime, setConvertedPrepTime] = useState(0);
+    const [convertedCookTime, setConvertedCookTime] = useState(0);
     function addHeader() {
-        const newIngredients = [
-            ...ingredients,
-            { header: '', content: [{ media: '', text: '' }] },
-        ];
+        const newIngredients = [...ingredients, { header: '', content: [] }];
         setIngredients(newIngredients);
 
         setCurrentIngredIndex(newIngredients.length - 1 || 0);
@@ -52,9 +66,28 @@ const RecipeAddPage = ({ f7router }) => {
 
         setIngredients(newIngredients);
     }
-    function addIngredientTextContent(index, text) {
+    function handleIngredientTextContentBlur(index, contentIndex, value) {
         const newIngredients = [...ingredients];
-        newIngredients[index].content.push({ media: '', text });
+        const ingredient = newIngredients[index];
+
+        if (value.trim() === '') {
+            const filteredContent = ingredient.content.filter(
+                (_, i) => i !== contentIndex
+            );
+            const updatedIngredient = {
+                ...ingredient,
+                content: filteredContent,
+            };
+            newIngredients[index] = updatedIngredient;
+
+            setIngredients(newIngredients);
+        }
+
+        setEditIndex(null);
+    }
+    function addIngredientTextContent(text) {
+        const newIngredients = [...ingredients];
+        newIngredients[currentIngredIndex].content.push({ media: '', text });
         setCurrentIngredIndex(newIngredients.length - 1 || 0);
         setIngredients(newIngredients);
     }
@@ -67,25 +100,38 @@ const RecipeAddPage = ({ f7router }) => {
      * @param {KeyboardEvent} evt
      */
     function handleIngredientsAdd(evt) {
-        console.log({ evt });
-        console.log(evt.target);
         if (evt.key === 'Enter' && !evt.shiftKey) {
             const { value } = evt.target;
-            const { index } = evt.target.dataset;
 
-            console.log({ value, index });
-            addIngredientTextContent(index, value);
+            addIngredientTextContent(value);
             evt.target.value = '';
         }
     }
+    function handleSwipeOutDelete(index, contentIndex) {
+        const newIngredients = [...ingredients];
+        const ingredient = newIngredients[index];
 
+        const filteredContent = ingredient.content.filter(
+            (_, i) => i !== contentIndex
+        );
+        const updatedIngredient = { ...ingredient, content: filteredContent };
+        newIngredients[index] = updatedIngredient;
+        setIngredients(newIngredients);
+        setEditIndex(null);
+    }
     useEffect(() => {
         const ingredientInput = $$('.rt-ingredient-input');
         ingredientInput.on('keydown', handleIngredientsAdd);
 
         return () => ingredientInput.off('keydown', handleIngredientsAdd);
     }, []);
-    useEffect(() => {}, [ingredients]);
+    // useEffect(() => {}, [ingredients]);
+    useEffect(() => {
+        setTimeSheetClassName(
+            timeSheetType === 'cook' ? 'cook-time' : 'prep-time'
+        );
+        console.log({ timeSheetType });
+    }, [timeSheetType]);
     const handlePopupClose = (canExit) => {
         if (canExit) {
             handleBackClick();
@@ -101,6 +147,25 @@ const RecipeAddPage = ({ f7router }) => {
     function handleBackClick() {
         f7router.back();
     }
+    function getPrepTime(time) {
+        setPrepTimeValue(time);
+        console.log('prep herre', { time });
+    }
+    // function getTime(time) {
+    //     setCookTimeValue(time);
+    //     console.log('cook herre', { time });
+    // }
+    function handleTimeSheetClose(time, type) {
+        console.log({ time });
+        if (timeSheetType === 'cook') {
+            setConvertedCookTime(+time?.hours * 60 + +time.minutes);
+            setCookTimeValue(time);
+        } else {
+            setConvertedPrepTime(+time?.hours * 60 + +time.minutes);
+            setPrepTimeValue(time);
+        }
+        // console.log({ h: timeValue?.hours * 60 });
+    }
     return (
         <Page name="recipe-add" className="custom-bg">
             <Navbar
@@ -109,15 +174,20 @@ const RecipeAddPage = ({ f7router }) => {
                 backLink={isMobile}
                 title="Add Recipe"
             >
-                <NavRight style={{ paddingRight: '1rem' }}>
-                    {isMobile && (
+                <NavRight style={{ paddingRight: '1.25rem' }}>
+                    {!isMobile && (
+                        <Button
+                            large
+                            text="Close"
+                            onClick={handlePopupOpen}
+                            style={{ marginRight: '1.5rem' }}
+                        />
+                    )}
+                    {
                         <Button fill round style={{ minWidth: '5rem' }}>
                             Save
                         </Button>
-                    )}
-                    {!isMobile && (
-                        <Button large text="Close" onClick={handlePopupOpen} />
-                    )}
+                    }
                 </NavRight>
             </Navbar>
 
@@ -156,8 +226,9 @@ const RecipeAddPage = ({ f7router }) => {
                     ingredients.map((ingredient, index) => {
                         return (
                             <List mediaList className="mt-2 mb-2" key={index}>
-                                {
-                                    <ListInput
+                                {/* {!isEmpty(ingredient.header) && (
+                                    <ListItem
+                                        groupTitle
                                         value={ingredient.header}
                                         onChange={(e) =>
                                             handleHeaderChange(
@@ -168,55 +239,106 @@ const RecipeAddPage = ({ f7router }) => {
                                         title={ingredient.header}
                                         clearButton
                                     />
-                                }
-                                {ingredient.content.map(
-                                    (content, contentIndex) => {
-                                        return !isEmpty(content.text) &&
-                                            editIndex &&
-                                            editIndex.index === index &&
-                                            editIndex.contentIndex ===
-                                                contentIndex ? (
-                                            <ListInput
-                                                value={content.text}
-                                                onChange={
-                                                    handleIngredientTextContentChange
-                                                }
-                                            />
-                                        ) : (
-                                            <ListItem
-                                                onClick={() =>
-                                                    handleContentClick(
-                                                        index,
+                                )} */}
+                                {ingredient.content?.length > 0 &&
+                                    ingredient.content.map(
+                                        (content, contentIndex) => {
+                                            return editIndex &&
+                                                editIndex.index === index &&
+                                                editIndex.contentIndex ===
+                                                    contentIndex ? (
+                                                <ListInput
+                                                    outline
+                                                    autofocus={
+                                                        editIndex.contentIndex ===
                                                         contentIndex
-                                                    )
-                                                }
-                                                key={contentIndex}
-                                                media={
-                                                    content?.media
-                                                        ? content?.media
-                                                        : null
-                                                }
-                                                noChevron
-                                                link
-                                                swipeout
-                                                title={content?.text}
-                                            >
-                                                <SwipeoutActions right>
-                                                    <SwipeoutButton delete>
-                                                        Delete
-                                                    </SwipeoutButton>
-                                                </SwipeoutActions>
-                                                {!content?.media && (
-                                                    <Icon
-                                                        slot="media"
-                                                        className="material-symbols-rounded material-fill"
-                                                        material="shopping_basket"
-                                                    />
-                                                )}
-                                            </ListItem>
-                                        );
-                                    }
-                                )}
+                                                    }
+                                                    clearButton
+                                                    onBlur={(e) =>
+                                                        handleIngredientTextContentBlur(
+                                                            index,
+                                                            contentIndex,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    key={crypto.randomUUID()}
+                                                    value={content.text}
+                                                    onChange={(e) =>
+                                                        handleIngredientTextContentChange(
+                                                            index,
+                                                            contentIndex,
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                />
+                                            ) : (
+                                                <ListItem
+                                                    className="rt-ing-item"
+                                                    key={crypto.randomUUID()}
+                                                    onSwipeoutDeleted={() =>
+                                                        handleSwipeOutDelete(
+                                                            index,
+                                                            contentIndex
+                                                        )
+                                                    }
+                                                    onClick={() =>
+                                                        handleContentClick(
+                                                            index,
+                                                            contentIndex
+                                                        )
+                                                    }
+                                                    media={
+                                                        content?.media
+                                                            ? content?.media
+                                                            : null
+                                                    }
+                                                    noChevron
+                                                    link
+                                                    swipeout
+                                                    title={content?.text}
+                                                >
+                                                    {isMobile ? (
+                                                        <SwipeoutActions right>
+                                                            <SwipeoutButton
+                                                                delete
+                                                            >
+                                                                Delete
+                                                            </SwipeoutButton>
+                                                        </SwipeoutActions>
+                                                    ) : (
+                                                        <Button
+                                                            className="rt-ing-delete-btn"
+                                                            type="button"
+                                                            onClick={() =>
+                                                                handleSwipeOutDelete(
+                                                                    index,
+                                                                    contentIndex
+                                                                )
+                                                            }
+                                                            iconOnly
+                                                            slot="after"
+                                                            style={{
+                                                                height: 20,
+                                                            }}
+                                                        >
+                                                            <Icon
+                                                                className="material-symbols-rounded"
+                                                                material="close"
+                                                                tooltip="remove"
+                                                            />
+                                                        </Button>
+                                                    )}
+                                                    {!content?.media && (
+                                                        <Icon
+                                                            slot="media"
+                                                            className="material-symbols-rounded material-fill"
+                                                            material="shopping_basket"
+                                                        />
+                                                    )}
+                                                </ListItem>
+                                            );
+                                        }
+                                    )}
                             </List>
                         );
                     })}
@@ -226,9 +348,8 @@ const RecipeAddPage = ({ f7router }) => {
                         clearButton
                         outline
                         placeholder="Add or paste ingredients"
-                        data-index={currentIngredIndex}
                     />
-                    <Block className="mt-2 mb-0">
+                    {/* <Block className="mt-2 mb-0">
                         <Link className="ov-hidden" onClick={addHeader}>
                             <Icon
                                 className="material-symbols-rounded"
@@ -236,7 +357,7 @@ const RecipeAddPage = ({ f7router }) => {
                             />
                             Add Header
                         </Link>
-                    </Block>
+                    </Block> */}
                 </ListGroup>
 
                 <List mediaList className="mt-2 mb-2">
@@ -273,12 +394,12 @@ const RecipeAddPage = ({ f7router }) => {
                 </List>
                 <ListGroup>
                     <ListInput
-                        className="rt-list-input"
+                        className="rt-list-input rt-instructions-input"
                         clearButton
                         outline
                         placeholder="Add or paste instructions"
                     />
-                    <Block className="mt-2 mb-0">
+                    {/* <Block className="mt-2 mb-0">
                         <Link className="ov-hidden">
                             <Icon
                                 className="material-symbols-rounded"
@@ -286,17 +407,54 @@ const RecipeAddPage = ({ f7router }) => {
                             />
                             Add Header
                         </Link>
-                    </Block>
+                    </Block> */}
                 </ListGroup>
-
-                {!isMobile && (
-                    <Block>
-                        <Button fill style={{ width: '7rem', fontSize: 18 }}>
-                            Save
-                        </Button>
-                    </Block>
-                )}
+                <List mediaList noChevron>
+                    <ListItem title={'Prep Time'}>
+                        <Link
+                            onClick={() => setTimeSheetType('prep')}
+                            slot="after"
+                            {...(!isMobile
+                                ? { popoverOpen: '.time' }
+                                : { sheetOpen: '.time' })}
+                            text={`${
+                                convertedPrepTime > 0
+                                    ? convertedCookTime + ' mins'
+                                    : 'Set time'
+                            }`}
+                        />
+                    </ListItem>
+                    <ListItem title={'Cook Time'}>
+                        <Link
+                            onClick={() => setTimeSheetType('cook')}
+                            slot="after"
+                            {...(!isMobile
+                                ? { popoverOpen: '.time' }
+                                : { sheetOpen: '.time' })}
+                            text={`${
+                                convertedCookTime > 0
+                                    ? convertedCookTime + ' mins'
+                                    : 'Set Time'
+                            }`}
+                        />
+                    </ListItem>
+                </List>
             </List>
+
+            {/* <TimeSheet
+                getTime={getPrepTime}
+                onClose={handleTimeSheetClose}
+                className="prep-time"
+            /> */}
+            <TimeSheet
+                title="Cook Time"
+                subtitle="How long does it take to cook this recipe?"
+                initialValue={initialTimeValue}
+                // getTime={getTime}
+                onClose={(time) => handleTimeSheetClose(time, timeSheetType)}
+                className={`time`}
+            />
+            {/* <TimeSheet getTime={getTime} onClose={handleTimeSheetClose} className='cook-time' /> */}
             <PageExitPopup
                 onCancel={() => handlePopupClose()}
                 onExit={handlePopupClose}

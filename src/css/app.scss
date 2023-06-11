@@ -196,9 +196,43 @@
 
 Global styles
 **/
-.page {
-    // background: #f7f8f7;
+.rt-ing-item {
+    &:hover {
+        .rt-ing-delete-btn {
+            visibility: visible;
+        }
+    }
+    .rt-ing-delete-btn {
+        visibility: hidden;
+    }
 }
+.rt-sheet {
+    background: var(--card-bg);
+    &.time-sheet {
+        height: 350px;
+    }
+}
+.time-swiper-wrap {
+    height: 130px;
+    display: flex;
+    .time-swiper {
+        // background: #000;
+        .swiper-slide {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.5;
+            &.swiper-slide-active {
+                border-top: 1.5px solid rgba(var(--f7-theme-color-rgb), 0.2);
+                border-bottom: 1.5px solid rgba(var(--f7-theme-color-rgb), 0.2);
+                // color: blue;
+                font-weight: 500;
+                opacity: 1;
+            }
+        }
+    }
+}
+
 .page {
     &.custom-bg {
         background: var(--card-bg);

@@ -99,7 +99,7 @@ function checkPermission({ to, from, resolve, reject }) {
 const routes = [
     {
         path: '/home/',
-        asyncComponent: () => import('../pages/home.jsx'),
+        component: HomePage,
 
         // beforeEnter: checkAuth,
     },

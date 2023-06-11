@@ -34,6 +34,9 @@ const MyApp = () => {
             closeByBackdropClick: false,
             backdropUnique: true,
         },
+        sheet: {
+            backdropUnique: true,
+        },
         // App routes
         routes: routes,
 
@@ -114,8 +117,6 @@ const MyApp = () => {
                     className="safe-areas"
                     url="/"
                     browserHistory
-                    browserHistoryOnLoad
-                    loadInitialPage
                     transition={transition}
                     browserHistorySeparator=""
                 />

@@ -26,7 +26,16 @@
         }
     }
 }
-
+.rt-home-page {
+    .page-content {
+        padding-bottom: 4rem;
+    }
+}
+.rt-navbar {
+    .navbar-bg {
+        background-color: var(--card-bg);
+    }
+}
 .rt-tab {
     padding-bottom: 6rem;
 }
@@ -61,9 +70,12 @@
 }
 
 .rt-fab {
-    //   margin-bottom: 4rem;
-    margin-right: 1rem;
-    border-radius: 50%;
+    &.fab {
+        //   margin-bottom: 4rem;
+        margin-right: 1rem;
+
+        --f7-fab-border-radius: 50%;
+    }
 }
 
 .rt-svg-avatar {

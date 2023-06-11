@@ -4,16 +4,16 @@ import Avatar from './avatar';
 import { formatDistanceToNowStrict } from 'date-fns';
 const PostCardHeader = ({ recipeOrPost }) => {
     return (
-        <CardHeader className="rt-recipe-card-header">
+        <CardHeader className="rt-card-header">
             <div className="flex jc-center ">
                 <Link
                     href="#"
                     // add link to user profile
-                    className="rt-recipe-card-header-link flex jc-center ov-hidden flex-grow"
+                    className="rt-card-header-link flex jc-center ov-hidden flex-grow"
                 >
                     <Avatar user={recipeOrPost.user} />
                     <div className="ml-4">
-                        <div className="text-bold rt-recipe-card-header-name">
+                        <div className="text-bold rt-card-header-name">
                             {recipeOrPost?.user?.name}
                         </div>
                         <div className="text-grey text-sm">

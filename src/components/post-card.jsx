@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Block,
     Button,
@@ -12,6 +12,7 @@ import {
 import isEmpty from 'just-is-empty';
 import PostCardHeader from './post-card-header';
 import RecipeCard from './recipe-card';
+import { useErrorBoundary } from 'react-error-boundary';
 
 const PostCard = ({ post }) => {
     return (
@@ -49,7 +50,7 @@ const PostCard = ({ post }) => {
             )}
 
             <Block className="mt-4 mb-4">
-                {post.likes_count > 0 && (
+                {post?.likes_count > 0 && (
                     <Block className="text-grey text-bold text-md">
                         {post.likes_count + ' Likes'}
                     </Block>
