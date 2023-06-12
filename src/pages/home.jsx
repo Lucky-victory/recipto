@@ -22,13 +22,14 @@ import {
 import '@/css/home.scss';
 import PostCard from '@/components/post-card';
 import { isMobile } from '@/js/helper';
-import { appwriteHandler, utils } from '../js/helper';
+
 import { useDispatch, useSelector } from 'react-redux';
-import { dropUser, fetchUser, updateUser } from '../js/state/slices/user';
+import { dropUser, fetchUser } from '../js/state/slices/user';
 import Avatar from '../components/avatar';
 import RecipeCard from '../components/recipe-card';
 import { fetchAllPosts } from '../js/state/slices/post';
 import PostSkeleton from '../components/post-skeleton';
+import { fetchAllRecipes } from '../js/state/slices/recipe';
 const HomePage = ({ f7router }) => {
     const dispatch = useDispatch();
     const homeSheetRef = useRef(null);
@@ -39,13 +40,20 @@ const HomePage = ({ f7router }) => {
     const { data: allPosts, loading: postLoading } = useSelector(
         (state) => state.post
     );
+    const { data: allRecipes, loading: recipeLoading } = useSelector(
+        (state) => state.recipes
+    );
+    console.log({ allRecipes });
     const fetchUserCb = useCallback(() => {
         dispatch(fetchUser());
     }, []);
     const fetchAllPostsCb = useCallback(() => {
         dispatch(fetchAllPosts());
     }, []);
-    const [activeTab, setActiveTab] = useState('feed');
+    const fetchAllRecipesCb = useCallback(() => {
+        dispatch(fetchAllRecipes());
+    }, []);
+    // const [activeTab, setActiveTab] = useState('feed');
     const showHomeSheet = () => {
         createSheet();
     };
@@ -99,27 +107,9 @@ const HomePage = ({ f7router }) => {
     function onPageBeforeOut() {
         f7.sheet.close();
     }
-    const recipes = [
-        {
-            likes_count: 10,
-            comments_count: 15,
-            created_at: 1686269779643,
-            user: {
-                username: 'luckyvictory',
-                name: 'Lucky Victory',
-                prefs: {
-                    avatar: 'https://randomuser.me/api/portraits/men/49.jpg',
-                },
-            },
-            id: 'rp-2',
-            title: 'My Second recipe',
-            slug: 'my-recipe-123',
-            photo: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg?auto=compress&cs=tinysrgb&w=600',
-        },
-    ];
-    function handleTabShow(tab) {
-        setActiveTab(tab);
-    }
+    // function handleTabShow(tab) {
+    //     setActiveTab(tab);
+    // }
     function showRecipeAddPage() {
         f7router.navigate('/recipe/add', {
             openIn: !isMobile ? 'popup' : undefined,
@@ -136,13 +126,19 @@ const HomePage = ({ f7router }) => {
     useEffect(() => {
         fetchUserCb();
         fetchAllPostsCb();
+        fetchAllRecipesCb();
     }, [dispatch]);
+    function fetchContents() {
+        fetchUserCb();
+        fetchAllPostsCb();
+        fetchAllRecipesCb();
+    }
     return (
         <Page
             name="home"
             onPageBeforeOut={onPageBeforeOut}
             className="rt-home-page"
-            onPageAfterIn={() => fetchAllPostsCb()}
+            onPageAfterIn={() => fetchContents()}
         >
             <Navbar className="rt-navbar">
                 <NavRight style={{ paddingRight: 16 }}>
@@ -152,7 +148,6 @@ const HomePage = ({ f7router }) => {
                     </div>
                 </NavRight>
             </Navbar>
-
             {!isMobile && (
                 <Block>
                     <List mediaList className="rt-single-input-list">
@@ -192,6 +187,17 @@ const HomePage = ({ f7router }) => {
                 </Block>
             )}
 
+            {!recipeLoading &&
+                allRecipes?.length > 0 &&
+                allRecipes.map((recipe) => (
+                    <RecipeCard
+                        recipe={recipe}
+                        key={crypto.randomUUID()}
+                        isInPost={false}
+                        canShowActionBtns
+                        canShowHeader
+                    />
+                ))}
             {postLoading && !allPosts?.length > 0
                 ? [1, 2, 3, 4, 5].map(() => (
                       <PostSkeleton key={crypto.randomUUID()} />
@@ -200,7 +206,6 @@ const HomePage = ({ f7router }) => {
                   allPosts.map((post, index) => (
                       <PostCard key={crypto.randomUUID()} post={post} />
                   ))}
-
             {isMobile && (
                 <Fab
                     slot="fixed"
@@ -214,13 +219,3 @@ const HomePage = ({ f7router }) => {
     );
 };
 export default HomePage;
-
-/* {recipes.map((recipe) => (
-                        <RecipeCard
-                            recipe={recipe}
-                            key={crypto.randomUUID()}
-                            isInPost={false}
-                            canShowActionBtns
-                            canShowHeader
-                        />
-                    ))} */

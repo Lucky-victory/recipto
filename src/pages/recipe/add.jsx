@@ -37,6 +37,7 @@ import {
     updateInstructions,
 } from '../../js/state/slices/instructions';
 import isEmpty from 'just-is-empty';
+import PhotoPreviewer from '../../components/photo-previewer';
 
 const $$ = Dom7;
 const RecipeAddPage = ({ f7router }) => {
@@ -64,7 +65,7 @@ const RecipeAddPage = ({ f7router }) => {
         fetchUser();
     }, []);
 
-    console.log({ ingredientsInState, instructionsInState });
+    // console.log({ ingredientsInState, instructionsInState });
 
     const initialRecipe = {
         title: '',
@@ -73,8 +74,8 @@ const RecipeAddPage = ({ f7router }) => {
         user: {},
         photo: '',
         instructions: instructionsInState,
-        cook_time: cookTimeValue,
-        prep_time: prepTimeValue,
+        cook_time: { hours: 0, minutes: 0 },
+        prep_time: { hours: 0, minutes: 0 },
         servings: +servingsValue,
     };
     const [recipeToSave, setRecipeToSave] = useState(initialRecipe);
@@ -282,6 +283,9 @@ const RecipeAddPage = ({ f7router }) => {
         const { name, value } = evt.target;
         setRecipeToSave((prev) => ({ ...prev, [name]: value }));
     }
+    function setRecipePhoto(url) {
+        setRecipeToSave((prev) => ({ ...prev, photo: url }));
+    }
     async function saveRecipe() {
         if (!currentUser) {
             dispatch(fetchUser());
@@ -314,8 +318,7 @@ const RecipeAddPage = ({ f7router }) => {
             dispatch(resetInstructions());
             setRecipeToSave(initialRecipe);
             setServingsValue(0);
-            setPrepTimeValue({ hours: 0, minutes: 0 });
-            setCookTimeValue({ hours: 0, minutes: 0 });
+
             setIsSaving(false);
         } catch (e) {
             setIsSaving(false);
@@ -355,22 +358,28 @@ const RecipeAddPage = ({ f7router }) => {
             </Navbar>
 
             <List className="rt-list">
-                <ListItem
-                    groupTitle
-                    title={'Title'}
-                    className="rt-list-title"
-                />
-                <ListInput
-                    className="rt-list-input"
-                    name="title"
-                    required
-                    validate
-                    onChange={handleTitleDescChange}
-                    value={recipeToSave.title}
-                    placeholder="Give your recipe a name"
-                    outline
-                />
+                <ListGroup>
+                    <ListItem
+                        mediaItem
+                        title={'Title'}
+                        className="rt-list-title"
+                    />
+                    <ListInput
+                        className="rt-list-input"
+                        name="title"
+                        required
+                        validate
+                        onChange={handleTitleDescChange}
+                        value={recipeToSave.title}
+                        placeholder="Give your recipe a name"
+                        outline
+                    />
 
+                    <PhotoPreviewer
+                        initialUrl={recipeToSave.photo}
+                        getPhotoUrl={(url) => setRecipePhoto(url)}
+                    />
+                </ListGroup>
                 <ListItem
                     className="rt-list-title"
                     groupTitle
@@ -539,7 +548,12 @@ const RecipeAddPage = ({ f7router }) => {
                 <List mediaList className="mt-2 mb-2">
                     <ListItem
                         className="rt-list-title"
-                        groupTitle
+                        mediaItem
+                        subtitle={
+                            isMobile
+                                ? 'Tap to edit, swipe to delete.'
+                                : 'Click to edit'
+                        }
                         title={'Instructions'}
                     />
 

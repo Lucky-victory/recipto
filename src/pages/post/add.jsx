@@ -117,7 +117,7 @@ const PostAddPage = ({ f7router }) => {
             f7.toast.show({
                 text: 'Post added successfully',
                 closeButton: true,
-                closeTimeout: 3000,
+                closeTimeout: 1500,
                 position: 'top',
             });
             setIsSubmitting(false);
@@ -125,8 +125,7 @@ const PostAddPage = ({ f7router }) => {
             setPhotoPreview('');
             setTimeout(() => {
                 redirectAfterPosting();
-            }, 3500);
-            console.log({ p: utils.deSerialize(p) });
+            }, 2000);
         } catch (e) {
             setIsSubmitting(false);
 
@@ -136,7 +135,6 @@ const PostAddPage = ({ f7router }) => {
     function redirectAfterPosting() {
         f7.popup.close();
         f7router.navigate('/home/', {
-            direction: 'backward',
             clearPreviousHistory: true,
         });
     }

@@ -122,7 +122,7 @@ const RecipeCard = ({
                         {recipe?.title}
                     </div>
 
-                    <Button
+                    {/* <Button
                         style={{ maxWidth: '3rem' }}
                         type="button"
                         round
@@ -132,7 +132,7 @@ const RecipeCard = ({
                             material="bookmark"
                             className="material-symbols-rounded"
                         />
-                    </Button>
+                    </Button> */}
                 </div>
             </Link>
         </Card>
