@@ -676,7 +676,7 @@ const RecipeAddPage = ({ f7router }) => {
                                                     <Icon
                                                         slot="media"
                                                         className="material-symbols-rounded material-fill"
-                                                        material="restaurant"
+                                                        material="integration_instructions"
                                                     />
                                                 )}
                                             </ListItem>
