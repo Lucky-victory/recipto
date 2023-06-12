@@ -79,7 +79,9 @@ const RecipeAddPage = ({ f7router }) => {
         servings: +servingsValue,
     };
     const [recipeToSave, setRecipeToSave] = useState(initialRecipe);
-    const [canSave, setCanSave] = useState(!isEmpty(recipeToSave.title));
+    const [isTitleEmpty, setIsTitleEmpty] = useState(
+        isEmpty(recipeToSave.title)
+    );
     const [currentIngredIndex, setCurrentIngredIndex] = useState(0);
     const [currentInstructionIndex, setCurrentInstructionIndex] = useState(0);
     const [ingredientEditIndex, setIngredientEditIndex] = useState(null);
@@ -225,7 +227,6 @@ const RecipeAddPage = ({ f7router }) => {
         ingredientInput.on('keydown', handleIngredientsAdd);
         const instructionsInput = $$('.rt-instructions-input');
         instructionsInput.on('keydown', handleInstructionsAdd);
-        setCanSave(!isEmpty(recipeToSave.title));
 
         return () => {
             ingredientInput.off('keydown', handleIngredientsAdd);
@@ -245,7 +246,9 @@ const RecipeAddPage = ({ f7router }) => {
             instructions: instructionsInState,
         }));
     }, [instructionsInState]);
-
+    useEffect(() => {
+        setIsTitleEmpty(isEmpty(recipeToSave.title));
+    }, [recipeToSave.title]);
     useEffect(() => {
         setRecipeToSave((prev) => ({ ...prev, cook_time: cookTimeValue }));
         setRecipeToSave((prev) => ({ ...prev, prep_time: prepTimeValue }));
@@ -314,6 +317,11 @@ const RecipeAddPage = ({ f7router }) => {
                 recip
             );
             console.log({ recip, saved });
+            f7.toast.show({
+                text: 'Recipe saved successfully',
+                closeButton: true,
+                closeTimeout: 2500,
+            });
             dispatch(resetIngredients());
             dispatch(resetInstructions());
             setRecipeToSave(initialRecipe);
@@ -344,7 +352,7 @@ const RecipeAddPage = ({ f7router }) => {
                     {
                         <Button
                             preloader
-                            // disabled={canSave}
+                            disabled={isTitleEmpty}
                             loading={isSaving}
                             onClick={() => saveRecipe()}
                             fill

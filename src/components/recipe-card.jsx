@@ -32,21 +32,20 @@ const RecipeCard = ({
                         href={`/recipe/view/${recipe?.id}`}
                         className="rt-recipe-card-content-inner"
                     >
-                        <div className="rt-recipe-card-img-wrap">
-                            {
+                        {recipe.photo && (
+                            <div className="rt-recipe-card-img-wrap">
                                 <div className="rt-img-placeholder">
                                     <span>{recipe?.title}</span>
                                 </div>
-                            }
-                            {recipe.photo && (
+
                                 <img
                                     src={recipe?.photo}
                                     alt=""
                                     loading="lazy"
                                     className="rt-recipe-card-img"
                                 />
-                            )}
-                        </div>
+                            </div>
+                        )}
 
                         <div className="rt-recipe-card-content-footer">
                             <div className="rt-recipe-card-content-title">
@@ -54,7 +53,7 @@ const RecipeCard = ({
                                     {recipe?.title}
                                 </span>
                             </div>
-                            <Button
+                            {/* <Button
                                 style={{ maxWidth: '3rem' }}
                                 type="button"
                                 round
@@ -64,7 +63,7 @@ const RecipeCard = ({
                                     material="bookmark"
                                     className="material-symbols-rounded"
                                 />
-                            </Button>
+                            </Button> */}
                         </div>
                     </Link>
                 </CardContent>
