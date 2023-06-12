@@ -212,6 +212,10 @@ Global styles
         height: 350px;
     }
 }
+.rt-popover{
+    background: var(--card-bg);
+
+}
 .time-swiper-wrap {
     height: 130px;
     display: flex;
@@ -222,6 +226,7 @@ Global styles
             align-items: center;
             justify-content: center;
             opacity: 0.5;
+            font-size: 17px;
             &.swiper-slide-active {
                 border-top: 1.5px solid rgba(var(--f7-theme-color-rgb), 0.2);
                 border-bottom: 1.5px solid rgba(var(--f7-theme-color-rgb), 0.2);

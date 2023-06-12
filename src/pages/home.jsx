@@ -132,7 +132,7 @@ const HomePage = ({ f7router }) => {
             clearPreviousHistory: true,
         });
     }
-    console.log({ allPosts });
+
     useEffect(() => {
         fetchUserCb();
         fetchAllPostsCb();

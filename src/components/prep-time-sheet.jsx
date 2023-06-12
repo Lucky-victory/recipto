@@ -5,15 +5,14 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 
 const noop = () => {};
 
-const TimeSheet = ({
+const PrepTimeSheet = ({
     getTime = noop,
     onClose = noop,
-    className = 'cook-time',
-    title = 'Cook Time',
-    subtitle = 'How long does it take to cook this recipe?',
-    initialValue = { hours: '0', minutes: '0' },
+    className = 'prep-time',
+    title = 'Prep Time',
+    subtitle = 'How long does it take to prepare this recipe?',
+    initialValue = { hours: 0, minutes: 0 },
 }) => {
-    const hours = [];
     const swiperOptions = {
         slidesPerView: 3,
         direction: 'vertical',
@@ -101,4 +100,4 @@ const TimeSheet = ({
     );
 };
 
-export default TimeSheet;
+export default PrepTimeSheet;

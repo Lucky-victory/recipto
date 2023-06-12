@@ -34,6 +34,9 @@ const MyApp = () => {
             closeByBackdropClick: false,
             backdropUnique: true,
         },
+        swipeout: {
+            removeElements: false,
+        },
         sheet: {
             backdropUnique: true,
         },
