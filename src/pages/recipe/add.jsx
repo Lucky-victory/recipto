@@ -19,19 +19,30 @@ import { isMobile } from '@/js/helper';
 import PageExitPopup from '../../components/page-exit-popup';
 import TimeSheet from '../../components/time-sheet';
 import PrepTimeSheet from '../../components/prep-time-sheet';
-import { utils } from '../../js/helper';
+import { appwriteHandler, envConfig, utils } from '../../js/helper';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '../../js/state/slices/user';
 import pick from 'just-pick';
 import ServingSheet from '../../components/serving-sheet';
+import {
+    addIngredientContent,
+    updateIngredients,
+    updateIngredientContent,
+    resetIngredients,
+} from '../../js/state/slices/ingredient';
+import {
+    addInstructionContent,
+    resetInstructions,
+    updateInstructionContent,
+    updateInstructions,
+} from '../../js/state/slices/instructions';
+import isEmpty from 'just-is-empty';
 
 const $$ = Dom7;
 const RecipeAddPage = ({ f7router }) => {
     const dispatch = useDispatch();
     const { data: currentUser } = useSelector((state) => state.user);
-    const fetchUserCb = useCallback(() => {
-        fetchUser();
-    }, []);
+
     const [isSaving, setIsSaving] = useState(false);
     const recipeId = utils.genID(undefined, false);
     const [prepTimeValue, setPrepTimeValue] = useState({
@@ -43,51 +54,63 @@ const RecipeAddPage = ({ f7router }) => {
         minutes: 0,
     });
     const [servingsValue, setServingsValue] = useState(0);
-    const [ingredients, setIngredients] = useState([
-        { header: '', content: [] },
-    ]);
-    const [instructions, setInstructions] = useState([
-        { header: '', content: [] },
-    ]);
+    const { data: instructionsInState } = useSelector(
+        (state) => state.instructions
+    );
+    const { data: ingredientsInState } = useSelector(
+        (state) => state.ingredients
+    );
+    const fetchUserCb = useCallback(() => {
+        fetchUser();
+    }, []);
+
+    console.log({ ingredientsInState, instructionsInState });
+
     const initialRecipe = {
         title: '',
         description: '',
-        ingredients,
+        ingredients: ingredientsInState,
         user: {},
         photo: '',
-        instructions,
-        cookTime: cookTimeValue,
-        prepTime: prepTimeValue,
-        servings: servingsValue,
+        instructions: instructionsInState,
+        cook_time: cookTimeValue,
+        prep_time: prepTimeValue,
+        servings: +servingsValue,
     };
     const [recipeToSave, setRecipeToSave] = useState(initialRecipe);
+    const [canSave, setCanSave] = useState(!isEmpty(recipeToSave.title));
     const [currentIngredIndex, setCurrentIngredIndex] = useState(0);
-    const [editIndex, setEditIndex] = useState(null);
+    const [currentInstructionIndex, setCurrentInstructionIndex] = useState(0);
+    const [ingredientEditIndex, setIngredientEditIndex] = useState(null);
+    const [instructionEditIndex, setInstructionEditIndex] = useState(null);
 
     const [convertedPrepTime, setConvertedPrepTime] = useState(0);
     const [convertedCookTime, setConvertedCookTime] = useState(0);
-    function addHeader() {
-        const newIngredients = [...ingredients, { header: '', content: [] }];
-        setIngredients(newIngredients);
 
+    /* Ingredients inputs script start */
+
+    function addHeader() {
+        const newIngredients = [
+            ...ingredientsInState,
+            { header: '', content: [] },
+        ];
+
+        dispatch(updateIngredients(newIngredients));
         setCurrentIngredIndex(newIngredients.length - 1 || 0);
     }
 
     function handleHeaderChange(index, value) {
-        const newIngredients = [...ingredients];
+        const newIngredients = [...ingredientsInState];
         newIngredients[index].header = value;
-
-        setIngredients(newIngredients);
+        dispatch(updateIngredients(newIngredients));
     }
 
     function handleIngredientTextContentChange(index, contentIndex, value) {
-        const newIngredients = [...ingredients];
-        newIngredients[index].content[contentIndex].text = value;
-
-        setIngredients(newIngredients);
+        dispatch(updateIngredientContent({ index, contentIndex, text: value }));
     }
+
     function handleIngredientTextContentBlur(index, contentIndex, value) {
-        const newIngredients = [...ingredients];
+        const newIngredients = [...ingredientsInState];
         const ingredient = newIngredients[index];
 
         if (value.trim() === '') {
@@ -99,35 +122,14 @@ const RecipeAddPage = ({ f7router }) => {
                 content: filteredContent,
             };
             newIngredients[index] = updatedIngredient;
-
-            setIngredients(newIngredients);
+            dispatch(updateIngredients(newIngredients));
         }
 
-        setEditIndex(null);
+        setIngredientEditIndex(null);
     }
-    function handleTitleDescChange(evt) {
-        const { name, value } = evt.target;
-        setRecipeToSave((prev) => ({ ...prev, [name]: value }));
-    }
-    function saveRecipe() {
-        const _recipeToSave = {
-            ...recipeToSave,
-            id: recipeId,
-            created_at: utils.currentDate.toISOString(),
-            updated_at: utils.currentDate.toISOString(),
-            user: pick(currentUser, ['prefs', 'name', '$id']),
-        };
-        const recip = utils.serialize(_recipeToSave, [
-            'instructions',
-            'ingredients',
-            'user',
-            'cookTime',
-            'prepTime',
-        ]);
-        console.log({ recip });
-    }
-    function handleContentClick(index, contentIndex) {
-        setEditIndex({ index, contentIndex });
+
+    function handleIngredientContentClick(index, contentIndex) {
+        setIngredientEditIndex({ index, contentIndex });
     }
 
     /**
@@ -135,42 +137,17 @@ const RecipeAddPage = ({ f7router }) => {
      * @param {KeyboardEvent} evt
      */
     function handleIngredientsAdd(evt) {
-        if (evt.key === 'Enter' && !evt.shiftKey) {
-            const { value } = evt.target;
-
+        const { value } = evt.target;
+        if (evt.key === 'Enter' && !evt.shiftKey && value.trim() !== '') {
             addIngredientTextContent(value);
             evt.target.value = '';
         }
     }
     function addIngredientTextContent(text) {
-        console.log('in add', { ingredients });
-        // const ing = ingredients[currentIngredIndex];
-        // ing.content = [...ing.content, { media: '', text }];
-        // const newIngredients = [...ingredients];
-        // console.log({ ing });
-        // newIngredients[currentIngredIndex] = ing;
-        // console.log({ newIngredients });
-        const newIngredients = [...ingredients].map((ing, i) => {
-            console.log({ currentIngredIndex });
-            if (i === currentIngredIndex) {
-                console.log('in add map', { ing });
-                const updatedContent = [...ing.content, { media: '', text }];
-
-                const s = {
-                    ...ing,
-                    content: updatedContent,
-                };
-                console.log({ s });
-                return s;
-            }
-            return ing;
-        });
-        // setCurrentIngredIndex(newIngredients.length - 1 || 0);
-        setIngredients(newIngredients);
+        dispatch(addIngredientContent({ text, index: currentIngredIndex }));
     }
-    function handleSwipeOutDelete(index, contentIndex) {
-        console.log('swipeout');
-        const newIngredients = [...ingredients];
+    function handleIngredientSwipeOutDelete(index, contentIndex) {
+        const newIngredients = [...ingredientsInState];
         const ingredient = newIngredients[index];
 
         const filteredContent = ingredient.content.filter(
@@ -178,19 +155,76 @@ const RecipeAddPage = ({ f7router }) => {
         );
         const updatedIngredient = { ...ingredient, content: filteredContent };
         newIngredients[index] = updatedIngredient;
-        setIngredients(newIngredients);
-        setEditIndex(null);
+        dispatch(updateIngredients(newIngredients));
+
+        setIngredientEditIndex(null);
     }
-    function handleInstructionsAdd() {}
+    /* Ingredients inputs script end */
+
+    /* Instructions inputs script start */
+    function handleInstructionsAdd(evt) {
+        const { value } = evt.target;
+        if (evt.key === 'Enter' && !evt.shiftKey && value.trim() !== '') {
+            addInstructionTextContent(value);
+            evt.target.value = '';
+        }
+    }
+    function addInstructionTextContent(text) {
+        dispatch(
+            addInstructionContent({ text, index: currentInstructionIndex })
+        );
+    }
+    function handleInstructionContentClick(index, contentIndex) {
+        setInstructionEditIndex({ index, contentIndex });
+    }
+    function handleInstructionTextContentBlur(index, contentIndex, value) {
+        const newInstructions = [...instructionsInState];
+        const instruction = newInstructions[index];
+
+        if (value.trim() === '') {
+            const filteredContent = instruction.content.filter(
+                (_, i) => i !== contentIndex
+            );
+            const updatedInstruction = {
+                ...instruction,
+                content: filteredContent,
+            };
+            newInstructions[index] = updatedInstruction;
+            dispatch(updateInstructions(newInstructions));
+        }
+
+        setInstructionEditIndex(null);
+    }
+    function handleInstructionSwipeOutDelete(index, contentIndex) {
+        const newInstructions = [...instructionsInState];
+        const instruction = newInstructions[index];
+
+        const filteredContent = instruction.content.filter(
+            (_, i) => i !== contentIndex
+        );
+        const updatedInstruction = { ...instruction, content: filteredContent };
+        newInstructions[index] = updatedInstruction;
+        dispatch(updateInstructions(newInstructions));
+
+        setInstructionEditIndex(null);
+    }
+    function handleInstructionTextContentChange(index, contentIndex, value) {
+        dispatch(
+            updateInstructionContent({ index, contentIndex, text: value })
+        );
+    }
+    /* Instructions inputs script end */
     useEffect(() => {
         fetchUserCb();
         console.log({ currentUser });
-    }, [dispatch]);
+    }, [dispatch, ingredientsInState, instructionsInState]);
+
     useEffect(() => {
         const ingredientInput = $$('.rt-ingredient-input');
         ingredientInput.on('keydown', handleIngredientsAdd);
         const instructionsInput = $$('.rt-instructions-input');
         instructionsInput.on('keydown', handleInstructionsAdd);
+        setCanSave(!isEmpty(recipeToSave.title));
 
         return () => {
             ingredientInput.off('keydown', handleIngredientsAdd);
@@ -199,15 +233,21 @@ const RecipeAddPage = ({ f7router }) => {
         };
     }, []);
     useEffect(() => {
-        setRecipeToSave((prev) => ({ ...prev, ingredients }));
-    }, [ingredients]);
+        setRecipeToSave((prev) => ({
+            ...prev,
+            ingredients: ingredientsInState,
+        }));
+    }, [ingredientsInState]);
     useEffect(() => {
-        setRecipeToSave((prev) => ({ ...prev, instructions }));
-    }, [instructions]);
+        setRecipeToSave((prev) => ({
+            ...prev,
+            instructions: instructionsInState,
+        }));
+    }, [instructionsInState]);
 
     useEffect(() => {
-        setRecipeToSave((prev) => ({ ...prev, cookTime: cookTimeValue }));
-        setRecipeToSave((prev) => ({ ...prev, prepTime: prepTimeValue }));
+        setRecipeToSave((prev) => ({ ...prev, cook_time: cookTimeValue }));
+        setRecipeToSave((prev) => ({ ...prev, prep_time: prepTimeValue }));
         setRecipeToSave((prev) => ({ ...prev, servings: servingsValue }));
         console.log({ recipeToSave });
     }, [prepTimeValue, cookTimeValue, servingsValue]);
@@ -238,6 +278,49 @@ const RecipeAddPage = ({ f7router }) => {
         setConvertedPrepTime(+time?.hours * 60 + +time.minutes);
         setPrepTimeValue(time);
     }
+    function handleTitleDescChange(evt) {
+        const { name, value } = evt.target;
+        setRecipeToSave((prev) => ({ ...prev, [name]: value }));
+    }
+    async function saveRecipe() {
+        if (!currentUser) {
+            dispatch(fetchUser());
+            return;
+        }
+        try {
+            setIsSaving(true);
+            const _recipeToSave = {
+                ...recipeToSave,
+                id: recipeId,
+                created_at: utils.currentDate.toISOString(),
+                updated_at: utils.currentDate.toISOString(),
+                user: pick(currentUser, ['prefs', 'name', '$id']),
+            };
+            const recip = utils.serialize(_recipeToSave, [
+                'instructions',
+                'ingredients',
+                'user',
+                'cook_time',
+                'prep_time',
+            ]);
+            const saved = await appwriteHandler.databases.createDocument(
+                envConfig.DATABASE_ID,
+                envConfig.RECIPE_COLLECTION_ID,
+                recipeId,
+                recip
+            );
+            console.log({ recip, saved });
+            dispatch(resetIngredients());
+            dispatch(resetInstructions());
+            setRecipeToSave(initialRecipe);
+            setServingsValue(0);
+            setPrepTimeValue({ hours: 0, minutes: 0 });
+            setCookTimeValue({ hours: 0, minutes: 0 });
+            setIsSaving(false);
+        } catch (e) {
+            setIsSaving(false);
+        }
+    }
     return (
         <Page name="recipe-add" className="custom-bg">
             <Navbar
@@ -257,6 +340,9 @@ const RecipeAddPage = ({ f7router }) => {
                     )}
                     {
                         <Button
+                            preloader
+                            // disabled={canSave}
+                            loading={isSaving}
                             onClick={() => saveRecipe()}
                             fill
                             round
@@ -277,6 +363,8 @@ const RecipeAddPage = ({ f7router }) => {
                 <ListInput
                     className="rt-list-input"
                     name="title"
+                    required
+                    validate
                     onChange={handleTitleDescChange}
                     value={recipeToSave.title}
                     placeholder="Give your recipe a name"
@@ -308,10 +396,14 @@ const RecipeAddPage = ({ f7router }) => {
                     }
                     title={'Ingredients'}
                 />
-                {ingredients.length > 0 &&
-                    ingredients.map((ingredient, index) => {
+                {ingredientsInState.length > 0 &&
+                    ingredientsInState.map((ingredient, index) => {
                         return (
-                            <List mediaList className="mt-2 mb-2" key={index}>
+                            <List
+                                mediaList
+                                className="mt-2 mb-2"
+                                key={crypto.randomUUID()}
+                            >
                                 {/* {!isEmpty(ingredient.header) && (
                                     <ListItem
                                         groupTitle
@@ -328,14 +420,15 @@ const RecipeAddPage = ({ f7router }) => {
                                 )} */}
                                 {ingredient.content.map(
                                     (content, contentIndex) => {
-                                        return editIndex &&
-                                            editIndex.index === index &&
-                                            editIndex.contentIndex ===
+                                        return ingredientEditIndex &&
+                                            ingredientEditIndex.index ===
+                                                index &&
+                                            ingredientEditIndex.contentIndex ===
                                                 contentIndex ? (
                                             <ListInput
                                                 outline
                                                 autofocus={
-                                                    editIndex.contentIndex ===
+                                                    ingredientEditIndex.contentIndex ===
                                                     contentIndex
                                                 }
                                                 clearButton
@@ -361,13 +454,13 @@ const RecipeAddPage = ({ f7router }) => {
                                                 className="rt-ing-item"
                                                 key={crypto.randomUUID()}
                                                 onSwipeoutDeleted={() =>
-                                                    handleSwipeOutDelete(
+                                                    handleIngredientSwipeOutDelete(
                                                         index,
                                                         contentIndex
                                                     )
                                                 }
                                                 onClick={() =>
-                                                    handleContentClick(
+                                                    handleIngredientContentClick(
                                                         index,
                                                         contentIndex
                                                     )
@@ -393,7 +486,7 @@ const RecipeAddPage = ({ f7router }) => {
                                                         className="rt-ing-delete-btn"
                                                         type="button"
                                                         onClick={() =>
-                                                            handleSwipeOutDelete(
+                                                            handleIngredientSwipeOutDelete(
                                                                 index,
                                                                 contentIndex
                                                             )
@@ -450,28 +543,125 @@ const RecipeAddPage = ({ f7router }) => {
                         title={'Instructions'}
                     />
 
-                    {ingredients.map((ingredient, index) => {
+                    {instructionsInState.map((instruction, index) => {
                         return (
-                            <ListItem
-                                key={index}
-                                noChevron
-                                link
-                                swipeout
-                                title={ingredient?.text}
+                            <List
+                                mediaList
+                                className="mt-2 mb-2"
+                                key={crypto.randomUUID()}
                             >
-                                <SwipeoutActions right>
-                                    <SwipeoutButton delete>
-                                        Delete
-                                    </SwipeoutButton>
-                                </SwipeoutActions>
-                                {!ingredient?.media && (
-                                    <Icon
-                                        slot="media"
-                                        className="material-symbols-rounded material-fill"
-                                        material="restaurant"
+                                {/* {!isEmpty(ingredient.header) && (
+                                    <ListItem
+                                        groupTitle
+                                        value={ingredient.header}
+                                        onChange={(e) =>
+                                            handleHeaderChange(
+                                                index,
+                                                e.target.value
+                                            )
+                                        }
+                                        title={ingredient.header}
+                                        clearButton
                                     />
+                                )} */}
+                                {instruction.content.map(
+                                    (content, contentIndex) => {
+                                        return instructionEditIndex &&
+                                            instructionEditIndex.index ===
+                                                index &&
+                                            instructionEditIndex.contentIndex ===
+                                                contentIndex ? (
+                                            <ListInput
+                                                outline
+                                                autofocus={
+                                                    instructionEditIndex.contentIndex ===
+                                                    contentIndex
+                                                }
+                                                clearButton
+                                                onBlur={(e) =>
+                                                    handleInstructionTextContentBlur(
+                                                        index,
+                                                        contentIndex,
+                                                        e.target.value
+                                                    )
+                                                }
+                                                key={crypto.randomUUID()}
+                                                value={content.text}
+                                                onChange={(e) =>
+                                                    handleInstructionTextContentChange(
+                                                        index,
+                                                        contentIndex,
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                        ) : (
+                                            <ListItem
+                                                className="rt-ing-item"
+                                                key={crypto.randomUUID()}
+                                                onSwipeoutDeleted={() =>
+                                                    handleInstructionSwipeOutDelete(
+                                                        index,
+                                                        contentIndex
+                                                    )
+                                                }
+                                                onClick={() =>
+                                                    handleInstructionContentClick(
+                                                        index,
+                                                        contentIndex
+                                                    )
+                                                }
+                                                media={
+                                                    content?.media
+                                                        ? content?.media
+                                                        : null
+                                                }
+                                                noChevron
+                                                link
+                                                swipeout
+                                                title={content?.text}
+                                            >
+                                                {isMobile ? (
+                                                    <SwipeoutActions right>
+                                                        <SwipeoutButton delete>
+                                                            Delete
+                                                        </SwipeoutButton>
+                                                    </SwipeoutActions>
+                                                ) : (
+                                                    <Button
+                                                        className="rt-ing-delete-btn"
+                                                        type="button"
+                                                        onClick={() =>
+                                                            handleInstructionSwipeOutDelete(
+                                                                index,
+                                                                contentIndex
+                                                            )
+                                                        }
+                                                        iconOnly
+                                                        slot="after"
+                                                        style={{
+                                                            height: 20,
+                                                        }}
+                                                    >
+                                                        <Icon
+                                                            className="material-symbols-rounded"
+                                                            material="close"
+                                                            tooltip="delete"
+                                                        />
+                                                    </Button>
+                                                )}
+                                                {!content?.media && (
+                                                    <Icon
+                                                        slot="media"
+                                                        className="material-symbols-rounded material-fill"
+                                                        material="restaurant"
+                                                    />
+                                                )}
+                                            </ListItem>
+                                        );
+                                    }
                                 )}
-                            </ListItem>
+                            </List>
                         );
                     })}
                 </List>
