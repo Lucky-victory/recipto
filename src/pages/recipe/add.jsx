@@ -403,7 +403,8 @@ const RecipeAddPage = ({ f7router }) => {
                     outline
                     placeholder="Introduce your recipe, add notes, cooking tips..."
                 />
-
+            </List>
+            <List>
                 <ListItem
                     className="rt-list-title"
                     mediaItem
@@ -536,7 +537,7 @@ const RecipeAddPage = ({ f7router }) => {
                             </List>
                         );
                     })}
-                <ListGroup>
+                <List className="mt-0 mb-2">
                     <ListInput
                         className="rt-list-input rt-ingredient-input"
                         clearButton
@@ -552,7 +553,7 @@ const RecipeAddPage = ({ f7router }) => {
                             Add Header
                         </Link>
                     </Block> */}
-                </ListGroup>
+                </List>
 
                 <List mediaList className="mt-2 mb-2">
                     <ListItem
@@ -688,7 +689,7 @@ const RecipeAddPage = ({ f7router }) => {
                         );
                     })}
                 </List>
-                <ListGroup>
+                <List className="mt-0 mb-2">
                     <ListInput
                         className="rt-list-input rt-instructions-input"
                         clearButton
@@ -704,7 +705,7 @@ const RecipeAddPage = ({ f7router }) => {
                             Add Header
                         </Link>
                     </Block> */}
-                </ListGroup>
+                </List>
                 <List mediaList noChevron>
                     <ListItem
                         title={'Servings'}

@@ -201,7 +201,6 @@
     margin-bottom: 1rem;
 }
 .text-wrap {
-    
     white-space: normal !important;
 }
 /**
@@ -211,6 +210,9 @@ Global styles
 .rt-segmented-tab {
     border-radius: unset;
     z-index: 10;
+    position: sticky;
+    top: -10px;
+
     .button {
         font-size: 1rem;
     }

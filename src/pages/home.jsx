@@ -43,7 +43,7 @@ const HomePage = ({ f7router, f7route }) => {
     const { data: allRecipes, loading: recipeLoading } = useSelector(
         (state) => state.recipes
     );
-    console.log({ allRecipes });
+
     const fetchUserCb = useCallback(() => {
         dispatch(fetchUser());
     }, []);

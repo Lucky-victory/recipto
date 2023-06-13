@@ -52,13 +52,13 @@ const RecipeViewPage = ({ f7router }) => {
                     </span>
                 </NavTitleLarge>
             </Navbar>
-            <Block className="rt-recipe-view-img-wrap">
+            <div className="rt-recipe-view-img-wrap">
                 {recipe?.photo && !recipeLoading ? (
                     <img src={recipe?.photo} />
                 ) : (
                     <SkeletonImage className="rt-recipe-view-img-wrap" />
                 )}
-            </Block>
+            </div>
 
             <Block strong className="flex flex-wrap gap-4">
                 {recipe.prep_time && (
@@ -102,11 +102,7 @@ const RecipeViewPage = ({ f7router }) => {
                     </div>
                 )}
             </Block>
-            <Segmented
-                className="rt-segmented rt-segmented-tab"
-                strong
-                style={{ position: 'sticky', top: 0 }}
-            >
+            <Segmented className="rt-segmented rt-segmented-tab" strong>
                 <Button text="Ingredients" tabLink="#ing-tab" tabLinkActive />
                 <Button text="Instructions" tabLink="#ins-tab" />
             </Segmented>
