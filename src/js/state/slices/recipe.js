@@ -49,6 +49,7 @@ export const recipesSlice = createSlice({
         setOneRecipe(state, { payload }) {
             state.one.data = payload;
         },
+        
     },
     extraReducers: (builder) => {
         builder

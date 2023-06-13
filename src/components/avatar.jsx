@@ -2,7 +2,7 @@ import { Link } from 'framework7-react';
 import React from 'react';
 import { utils } from '../js/helper';
 
-const Avatar = ({ user, size = '', link }) => {
+const Avatar = ({ user, sizeClass = '',size=42, link }) => {
     return link ? (
         <Link iconOnly href={link}>
             {user?.prefs?.avatar ? (
@@ -26,13 +26,13 @@ const Avatar = ({ user, size = '', link }) => {
                 <img
                     src={user?.prefs?.avatar}
                     alt=""
-                    className={`rt-avatar rt-avatar-${size}`}
+                    className={`rt-avatar rt-avatar-${sizeClass}`}
                 />
             ) : (
                 <div
                     className="rt-svg-avatar"
                     dangerouslySetInnerHTML={{
-                        __html: utils.generateAvatar(user?.name),
+                        __html: utils.generateAvatar(user?.name,size),
                     }}
                 ></div>
             )}

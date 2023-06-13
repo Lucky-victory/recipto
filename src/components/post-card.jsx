@@ -16,7 +16,7 @@ import { utils } from '../js/helper';
 
 const PostCard = ({ post }) => {
     function handleShare(post) {
-        utils.handleShare({ path: `post/view/${post?.id}` });
+        utils.handleShare({ path: `post/view/${post?.id}` }).then(() => {});
     }
     return (
         <Card className="rt-card">
@@ -62,7 +62,7 @@ const PostCard = ({ post }) => {
 
             <CardFooter className="rt-card-footer">
                 <div className="rt-card-footer-inner">
-                    <Button round>
+                    <Button round type="button">
                         <Icon
                             className="material-symbols-rounded"
                             material="thumb_up"
@@ -74,7 +74,11 @@ const PostCard = ({ post }) => {
                             material="chat"
                         />
                     </Button> */}
-                    <Button round onClick={() => handleShare(post)}>
+                    <Button
+                        type="button"
+                        round
+                        onClick={() => handleShare(post)}
+                    >
                         <Icon
                             className="material-symbols-rounded"
                             md="material:share"

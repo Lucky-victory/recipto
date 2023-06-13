@@ -30,11 +30,12 @@ const RecipeCard = ({
         f7router.navigate(`/recipe/view/${recipe?.id}`);
     }
     function handleShare(recipe) {
-        utils.handleShare({
-            title: recipe?.titile,
-            path: `recipe/view/${recipe?.id}`,
-        });
-        // console.log({ shareRes });
+        utils
+            .handleShare({
+                title: recipe?.titile,
+                path: `recipe/view/${recipe?.id}`,
+            })
+            .then(() => {});
     }
     return !isInPost ? (
         <Card className="rt-recipe-card">
@@ -100,7 +101,7 @@ const RecipeCard = ({
 
                     <CardFooter className="rt-recipe-card-footer">
                         <div className="rt-recipe-card-footer-inner">
-                            <Button round>
+                            <Button round type="button">
                                 <Icon
                                     className="material-symbols-rounded"
                                     material="thumb_up"
@@ -112,7 +113,11 @@ const RecipeCard = ({
                                     material="chat"
                                 />
                             </Button> */}
-                            <Button round onClick={() => handleShare(recipe)}>
+                            <Button
+                                type="button"
+                                round
+                                onClick={() => handleShare(recipe)}
+                            >
                                 <Icon
                                     className="material-symbols-rounded"
                                     md="material:share"

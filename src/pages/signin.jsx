@@ -3,6 +3,7 @@ import {
     BlockTitle,
     Button,
     Icon,
+    Link,
     List,
     ListInput,
     Navbar,
@@ -21,20 +22,21 @@ import '@/css/signin-up.scss';
 import { Preferences } from '@capacitor/preferences';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser, updateUser } from '../js/state/slices/user';
+import isEmpty from 'just-is-empty';
 const SignInPage = ({ f7router }) => {
     const initialForm = {
-        fullname: '',
         password: '',
         email: '',
     };
     const dispatch = useDispatch();
-    // const fetchUserCb = useCallback(() => {
-    //     dispatch(fetchUser());
-    // }, []);
-    // const { data: currentUser, loading: userLoading } = useSelector(
-    //     (state) => state.user
-    // );
-    const [signUpForm, setSignupForm] = useState(initialForm);
+    const fetchUserCb = useCallback(() => {
+        dispatch(fetchUser());
+    }, []);
+    const [errorMessage, setErrorMessage] = useState('');
+    const { data: currentUser, loading: userLoading } = useSelector(
+        (state) => state.user
+    );
+    const [signInForm, setSignupForm] = useState(initialForm);
     const [authType, setAuthType] = useState('email');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const handleInputChange = (ev) => {
@@ -45,17 +47,11 @@ const SignInPage = ({ f7router }) => {
     async function handleFormSubmit(ev) {
         ev.preventDefault();
         setIsSubmitting(true);
+        setErrorMessage('')
         try {
-            const newUser = await appwriteHandler.account.create(
-                utils.genID(),
-                signUpForm.email,
-                signUpForm.password,
-                signUpForm.fullname
-            );
-            dispatch(updateUser(newUser));
-            const tt = await appwriteHandler.account.createEmailSession(
-                signUpForm.email,
-                signUpForm.password
+            await appwriteHandler.account.createEmailSession(
+                signInForm.email,
+                signInForm.password
             );
             // const tt = await appwriteHandler.account.createVerification(
             //     'http://localhost:5174/verify/'
@@ -63,17 +59,19 @@ const SignInPage = ({ f7router }) => {
 
             f7.toast.show({
                 position: 'top',
-                text: 'Sign up successful',
+                text: 'Sign in successful',
                 closeTimeout: 2000,
             });
-
-            f7router.navigate('/home/', { clearPreviousHistory: true });
+            setTimeout(() => {
+                f7router.navigate('/home/');
+            }, 2000);
 
             // console.log({ newUser, tt });
             setIsSubmitting(false);
             setSignupForm(initialForm);
         } catch (e) {
             setIsSubmitting(false);
+            setErrorMessage(e?.response?.message);
             console.log('error', { e });
         }
     }
@@ -83,29 +81,22 @@ const SignInPage = ({ f7router }) => {
         try {
             const res = appwriteHandler.account.createOAuth2Session(
                 'google',
-                location.origin
+                utils.mainURL + '/home/'
             );
-            // f7.toast.show({
-            //     position: 'top',
-            //     text: 'Sign up successful',
-            //     closeTimeout: 2000,
-            // });
-            console.log({ res });
         } catch (e) {
             setIsSubmitting(false);
             console.log('google auth error', { e });
         }
     }
     function onPageBeforeIn() {
-        // if (currentUser) {
-        //     f7router.navigate('/home/');
-        // }
-        // console.log({ currentUser });
+        fetchUserCb();
+        if (!isEmpty(currentUser)) {
+            f7router.navigate('/home/');
+        }
     }
     useEffect(() => {
-        // fetchUserCb();
-        // dispatch(fetchUser());
-    }, []);
+        fetchUserCb();
+    }, [dispatch]);
     return (
         <Page
             name="signin"
@@ -115,7 +106,7 @@ const SignInPage = ({ f7router }) => {
             onPageBeforeIn={onPageBeforeIn}
         >
             <Navbar className="rt-navbar" backLink={isMobile} />
-            <div className="rt-signin-page-inner flex">
+            <div className="rt-signin-page-inner flex ">
                 <Block className="rt-signin-page-banner-wrap">
                     <div className="rt-overlay"></div>
 
@@ -128,24 +119,17 @@ const SignInPage = ({ f7router }) => {
                 <Block className="rt-signin-page-form-wrap">
                     <div className="rt-signin-page-form-wrap-inner">
                         <BlockTitle large className="text-center mb-4">
-                            Join over 1,000 Users sharing their recipes
+                            Welcome back
                         </BlockTitle>
+                        <span className="text-color-red">{errorMessage}</span>
                         <List form onSubmit={handleFormSubmit}>
-                            <ListInput
-                                label={'Your Name'}
-                                outline
-                                required
-                                onChange={handleInputChange}
-                                name="fullname"
-                                value={signUpForm.fullname}
-                            />
                             <ListInput
                                 type="email"
                                 name="email"
                                 validate
                                 onChange={handleInputChange}
                                 required
-                                value={signUpForm.email}
+                                value={signInForm.email}
                                 label={'E-mail address'}
                                 outline
                             />
@@ -153,12 +137,16 @@ const SignInPage = ({ f7router }) => {
                                 info="min: 8 characters"
                                 label={'Password'}
                                 name="password"
+                                value={signInForm.password}
                                 onChange={handleInputChange}
                                 required
                                 type="password"
                                 outline
                             />
-
+                            <Block>
+                                Don't have an account yet?{' '}
+                                <Link href="/signup/" text="Sign Up" />
+                            </Block>
                             <Block>
                                 <Button
                                     type="submit"
