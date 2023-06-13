@@ -33,7 +33,7 @@ import { fetchAllRecipes } from '../js/state/slices/recipe';
 const HomePage = ({ f7router, f7route }) => {
     const dispatch = useDispatch();
     const homeSheetRef = useRef(null);
-    const [isSheetOpen, setIsSheetOpen] = useState(false);
+    // const [isSheetOpen, setIsSheetOpen] = useState(false);
     const { data: currentUser, loading: userLoading } = useSelector(
         (state) => state.user
     );
@@ -128,17 +128,23 @@ const HomePage = ({ f7router, f7route }) => {
         fetchAllPostsCb();
         fetchAllRecipesCb();
     }, [dispatch]);
-    function fetchContents() {
+    function refetch() {
         fetchUserCb();
         fetchAllPostsCb();
         fetchAllRecipesCb();
+        setTimeout(() => {
+            f7.ptr.done();
+        }, 3000);
     }
     return (
         <Page
             name="home"
+            ptrDistance={100}
+            ptr
+            ptrMousewheel={true}
+            onPtrRefresh={refetch}
             onPageBeforeOut={onPageBeforeOut}
             className="rt-home-page"
-            onPageAfterIn={() => fetchContents()}
         >
             <Navbar className="rt-navbar">
                 <NavRight style={{ paddingRight: 16 }}>

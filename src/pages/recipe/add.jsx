@@ -377,6 +377,7 @@ const RecipeAddPage = ({ f7router }) => {
                         name="title"
                         required
                         validate
+                        info="Title is required"
                         onChange={handleTitleDescChange}
                         value={recipeToSave.title}
                         placeholder="Give your recipe a name"
@@ -468,7 +469,7 @@ const RecipeAddPage = ({ f7router }) => {
                                             />
                                         ) : (
                                             <ListItem
-                                                className="rt-ing-item"
+                                                className="rt-ing-item text-grey"
                                                 key={crypto.randomUUID()}
                                                 onSwipeoutDeleted={() =>
                                                     handleIngredientSwipeOutDelete(
@@ -619,7 +620,7 @@ const RecipeAddPage = ({ f7router }) => {
                                             />
                                         ) : (
                                             <ListItem
-                                                className="rt-ing-item"
+                                                className="rt-ing-item text-grey"
                                                 key={crypto.randomUUID()}
                                                 onSwipeoutDeleted={() =>
                                                     handleInstructionSwipeOutDelete(
@@ -675,7 +676,7 @@ const RecipeAddPage = ({ f7router }) => {
                                                 {!content?.media && (
                                                     <Icon
                                                         slot="media"
-                                                        className="material-symbols-rounded material-fill"
+                                                        className="material-symbols-rounded "
                                                         material="integration_instructions"
                                                     />
                                                 )}

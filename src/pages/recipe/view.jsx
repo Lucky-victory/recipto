@@ -1,5 +1,6 @@
 import {
     Block,
+    BlockTitle,
     Button,
     Icon,
     List,
@@ -112,34 +113,74 @@ const RecipeViewPage = ({ f7router }) => {
             <Tabs animated>
                 <Tab tabActive id={'ing-tab'}>
                     <PageContent className="p-0 pt-2 rt-tab-content">
-                        {recipe.ingredients?.map((item) => (
-                            <List mediaList key={crypto.randomUUID()}>
-                                {item.content?.map((cont) => (
-                                    <ListItem
-                                        key={crypto.randomUUID()}
-                                        media={cont?.media ? cont.media : null}
-                                        text={cont.text}
-                                    >
-                                        {!cont.media && (
-                                            <Icon
-                                                slot="media"
-                                                className="material-symbols-rounded"
-                                                material="shopping_basket"
-                                            />
-                                        )}
-                                    </ListItem>
-                                ))}
-                            </List>
-                        ))}
+                        {recipe.ingredients?.map((item) =>
+                            !(item?.content?.length > 0) ? (
+                                <BlockTitle
+                                    large
+                                    key={crypto.randomUUID()}
+                                    className="text-grey text-center text-wrap"
+                                >
+                                    Ingredients Info for this recipe is not
+                                    Available
+                                </BlockTitle>
+                            ) : (
+                                <List mediaList key={crypto.randomUUID()}>
+                                    {item.content?.map((cont) => (
+                                        <ListItem
+                                            key={crypto.randomUUID()}
+                                            media={
+                                                cont?.media ? cont.media : null
+                                            }
+                                            text={cont.text}
+                                        >
+                                            {!cont.media && (
+                                                <Icon
+                                                    slot="media"
+                                                    className="material-symbols-rounded"
+                                                    material="shopping_basket"
+                                                />
+                                            )}
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            )
+                        )}
                     </PageContent>
                 </Tab>
                 <Tab id={'ins-tab'}>
-                    <PageContent>
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        Non modi voluptatibus doloribus ea! Tempore ab,
-                        inventore soluta dolore adipisci odit voluptatum,
-                        numquam sapiente officiis doloremque minus, doloribus
-                        quisquam debitis deleniti.
+                    <PageContent className="p-0 pt-2 rt-tab-content">
+                        {recipe.instructions?.map((item) =>
+                            !(item?.content?.length > 0) ? (
+                                <BlockTitle
+                                    large
+                                    key={crypto.randomUUID()}
+                                    className="text-grey text-center text-wrap"
+                                >
+                                    Instructions Info for this recipe is not
+                                    Available
+                                </BlockTitle>
+                            ) : (
+                                <List mediaList key={crypto.randomUUID()}>
+                                    {item.content?.map((cont) => (
+                                        <ListItem
+                                            key={crypto.randomUUID()}
+                                            media={
+                                                cont?.media ? cont.media : null
+                                            }
+                                            text={cont.text}
+                                        >
+                                            {!cont.media && (
+                                                <Icon
+                                                    slot="media"
+                                                    className="material-symbols-rounded"
+                                                    material="integration_instructions"
+                                                />
+                                            )}
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            )
+                        )}
                     </PageContent>
                 </Tab>
             </Tabs>

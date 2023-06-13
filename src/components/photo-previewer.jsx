@@ -67,7 +67,6 @@ const PhotoPreviewer = ({
                 id={inputId}
                 type="file"
                 accept="image/*"
-                capture
             />
 
             {isLoading && (

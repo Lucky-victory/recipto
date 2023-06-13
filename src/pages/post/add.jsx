@@ -249,7 +249,7 @@ const PostAddPage = ({ f7router }) => {
                     id="photo-input"
                     type="file"
                     accept="image/*"
-                    capture
+                    
                 />
                 <Block>
                     <Button
@@ -264,7 +264,7 @@ const PostAddPage = ({ f7router }) => {
                         />{' '}
                         <span>Photo</span>
                     </Button>
-                    <Button
+                    {/* <Button
                         href="/recipe/add"
                         openIn="popup"
                         outline
@@ -275,7 +275,7 @@ const PostAddPage = ({ f7router }) => {
                             material="restaurant"
                         />{' '}
                         <span>Recipe</span>
-                    </Button>
+                    </Button> */}
                 </Block>
 
                 {!isMobile && (
