@@ -13,17 +13,63 @@ import { f7 } from 'framework7-react';
 import SignInPage from '../pages/signin.jsx';
 import SignupPage from '../pages/signup.jsx';
 import OnboardingPage from '../pages/onboarding.jsx';
+import VerifyUserPage from '../pages/verify.jsx';
+import { AppStorage, appwriteHandler, storageKeys } from './helper.js';
+import { Preferences } from '@capacitor/preferences';
+import RecipeViewPage from '../pages/recipe/view.jsx';
+import PostViewPage from '../pages/post/view.jsx';
 
 const device = getDevice();
 
 const isMobile = device.ios || device.android;
 const transition = isMobile ? 'f7-cover' : undefined;
-function checkAuth({ to, from, resolve, reject }) {
-    if (/* some condition to check user is logged in */ 1) {
-        resolve();
-    } else {
-        reject();
-    }
+function checkAuth(ev, page) {
+    // console.log({ ev, page });
+    // AppStorage.get(storageKeys.USER)
+    //     .then((user) => {
+    //         console.log({ user });
+    //         if (!Object.keys(user).length) {
+    //         ('/signin/');
+    //         } else {
+    //             ev.resolve('/home/');
+    //         }
+    //     })
+    //     .catch((e) => {
+    //         ev.resolve('/signin/');
+    //         console.log('error redirect', { e });
+    //     });
+}
+function checkGuest({ to, resolve, reject }) {
+    // console.log({ event, page });
+    appwriteHandler.account
+        .get()
+        .then((user) => {
+            console.log({ user });
+            if (!user) {
+                resolve();
+            } else {
+                reject();
+            }
+        })
+        .catch((e) => {
+            resolve();
+            console.log('error guest page', { e });
+        });
+}
+function checkGuestRedirect({ to, resolve, reject }) {
+    appwriteHandler.account
+        .get()
+        .then((user) => {
+            if (!user) {
+                resolve('/signin/');
+            } else {
+                resolve('/home/');
+            }
+        })
+        .catch((e) => {
+            resolve('/signin/');
+            console.log('error redirect', { e });
+        });
 }
 function checkPermission({ to, from, resolve, reject }) {
     if (/* some condition to check user edit permission */ 1) {
@@ -32,28 +78,34 @@ function checkPermission({ to, from, resolve, reject }) {
         reject();
     }
 }
-function beforeLeave({ to, resolve, reject }) {
-    if (to.path !== '/recipe/add') {
-        f7.dialog.confirm(
-            'Are you sure you want to leave this page without saving data?',
-            function () {
-                // proceed navigation
-                resolve();
-            },
-            function () {
-                // stay on page
-                reject();
-            }
-        );
-    } else {
-        resolve();
-    }
-}
+// function beforeLeave({ to, resolve, reject }) {
+//     if (to.path !== '/recipe/add') {
+//         f7.dialog.confirm(
+//             'Are you sure you want to leave this page without saving data?',
+//             function () {
+//                 // proceed navigation
+//                 resolve();
+//             },
+//             function () {
+//                 // stay on page
+//                 reject();
+//             }
+//         );
+//     } else {
+//         resolve();
+//     }
+// }
 
 const routes = [
     {
-        path: '/',
+        path: '/home/',
         component: HomePage,
+
+        // beforeEnter: checkAuth,
+    },
+    {
+        path: '/',
+        redirect: checkGuestRedirect,
     },
     {
         path: '/about/',
@@ -63,11 +115,17 @@ const routes = [
         alias: ['/join/', '/login/'],
         path: '/signin/',
         component: SignInPage,
+        beforeEnter: checkGuest,
     },
     {
         alias: '/register/',
         path: '/signup/',
+        // beforeEnter: checkGuest,
         component: SignupPage,
+    },
+    {
+        path: '/verify/',
+        component: VerifyUserPage,
     },
     {
         alias: '/onboard/',
@@ -77,22 +135,32 @@ const routes = [
     {
         path: '/recipe/',
         component: NewRecipePage,
+
         routes: [
             {
                 path: '/add',
                 component: RecipeAddPage,
-                beforeLeave,
+            },
+            {
+                path: '/view/:id',
+                component: RecipeViewPage,
             },
         ],
     },
     {
         path: '/post/',
         component: NewPostPage,
+
         routes: [
             {
                 path: '/add',
 
                 component: PostAddPage,
+            },
+            {
+                path: '/view/:id',
+
+                component: PostViewPage,
             },
         ],
     },
