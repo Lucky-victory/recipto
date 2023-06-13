@@ -30,6 +30,7 @@ import RecipeCard from '../components/recipe-card';
 import { fetchAllPosts } from '../js/state/slices/post';
 import PostSkeleton from '../components/post-skeleton';
 import { fetchAllRecipes } from '../js/state/slices/recipe';
+import isEmpty from 'just-is-empty';
 const HomePage = ({ f7router, f7route }) => {
     const dispatch = useDispatch();
     const homeSheetRef = useRef(null);
@@ -110,6 +111,14 @@ const HomePage = ({ f7router, f7route }) => {
     // function handleTabShow(tab) {
     //     setActiveTab(tab);
     // }
+
+    function onPageBeforeIn() {
+        // fetchUserCb();
+        // if (isEmpty(currentUser)) {
+        //     f7router.navigate('/signin/');
+        // }
+    }
+
     function showRecipeAddPage() {
         f7router.navigate('/recipe/add', {
             openIn: !isMobile ? 'popup' : undefined,
@@ -117,10 +126,11 @@ const HomePage = ({ f7router, f7route }) => {
     }
     function logout() {
         dispatch(dropUser());
-        f7router.navigate('/signin/', {
-            reloadPrevious: true,
-            clearPreviousHistory: true,
-        });
+        setTimeout(() => {
+            f7router.navigate('/signin/', {
+                clearPreviousHistory: true,
+            });
+        }, 1000);
     }
 
     useEffect(() => {
@@ -129,7 +139,7 @@ const HomePage = ({ f7router, f7route }) => {
         fetchAllRecipesCb();
     }, [dispatch]);
     function refetch() {
-        fetchUserCb();
+        // fetchUserCb();
         fetchAllPostsCb();
         fetchAllRecipesCb();
         setTimeout(() => {
@@ -139,11 +149,12 @@ const HomePage = ({ f7router, f7route }) => {
     return (
         <Page
             name="home"
-            ptrDistance={100}
+            ptrDistance={isMobile ? 100 : 200}
             ptr
             ptrMousewheel={true}
             onPtrRefresh={refetch}
             onPageBeforeOut={onPageBeforeOut}
+            onPageBeforeIn={onPageBeforeIn}
             className="rt-home-page"
         >
             <Navbar className="rt-navbar">

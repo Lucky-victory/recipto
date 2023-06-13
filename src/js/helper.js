@@ -6,6 +6,7 @@ export const isMobile = device.ios || device.android;
 import UIAvatarSvg from 'ui-avatar-svg';
 import { Preferences } from '@capacitor/preferences';
 import { Share } from '@capacitor/share';
+import isEmpty from 'just-is-empty';
 export const envConfig = {
     PROJECT_ID: import.meta.env.VITE_APPWRITE_PROJECT_ID,
     BUCKET_ID: import.meta.env.VITE_APPWRITE_BUCKET_ID,
@@ -41,13 +42,14 @@ class Utils {
         }
         return initials;
     }
-    generateAvatar(name) {
+    generateAvatar(name, size = 42) {
+        const bgColor = this.generateRandomHexColor('high');
         const svg = new UIAvatarSvg()
             .text(this.getUserNameInitials(name))
-            .size(42)
+            .size(size)
             .round(true)
             .fontWeight(600)
-            .bgColor('var(--f7-ios-surface-2)')
+            .bgColor(bgColor)
             .generate();
         return svg;
     }
@@ -61,9 +63,68 @@ class Utils {
     convertTime(time = { hours: 0, minutes: 0 }) {
         return +time.minutes + +time.hours * 60;
     }
-    async handleShare({ title = '', text = '', path } = {}) {
-        const url = window.location.href + '/' + path;
-        return await Share.share({
+    generateRandomHexColor(contrast = 'high') {
+        // Function to generate a random hex digit
+        function getRandomHexDigit() {
+            const hexDigits = '0123456789ABCDEF';
+            return hexDigits[Math.floor(Math.random() * 16)];
+        }
+
+        // Generate a random hex color
+        function generateHexColor() {
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += getRandomHexDigit();
+            }
+            return color;
+        }
+
+        // Check contrast level and adjust color if necessary
+        function adjustContrast(color) {
+            // Get RGB components from hex color
+            const red = parseInt(color.slice(1, 3), 16);
+            const green = parseInt(color.slice(3, 5), 16);
+            const blue = parseInt(color.slice(5), 16);
+
+            // Calculate relative luminance based on ITU-R BT.709 formula
+            const luminance =
+                (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+
+            // Determine contrast threshold based on desired contrast level
+            const threshold = contrast === 'high' ? 0.2 : 0.5;
+
+            // Adjust color if luminance is below threshold
+            if (luminance < threshold) {
+                return adjustContrast(generateHexColor());
+            }
+
+            return color;
+        }
+
+        // Generate initial hex color and adjust contrast if necessary
+        let hexColor = generateHexColor();
+        if (contrast !== 'average') {
+            hexColor = adjustContrast(hexColor);
+        }
+
+        return hexColor;
+    }
+
+    get mainURL() {
+        const port = !isEmpty(window.location.port)
+            ? ':' + window.location.port
+            : '';
+        const mainURL =
+            window.location.protocol + '//' + window.location.hostname + port;
+        return mainURL;
+    }
+
+    handleShare({ title = 'Share this', text = '', path } = {}) {
+        const { mainURL } = this;
+
+        const url = mainURL + '/' + path;
+        console.log(mainURL, url);
+        return Share.share({
             text,
             title,
             url,
