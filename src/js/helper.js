@@ -57,6 +57,9 @@ class Utils {
     get currentDate() {
         return new Date();
     }
+    convertTime(time={hours:0,minutes:0}){
+        return (+time.minutes+ (+time.hours*60))
+    }
 }
 export const utils = new Utils();
 export class AppWriteHandler {

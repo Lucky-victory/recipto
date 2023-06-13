@@ -272,14 +272,14 @@ const RecipeAddPage = ({ f7router }) => {
     }
 
     function handleCookTimeSheetClose(time) {
-        setConvertedCookTime(+time?.hours * 60 + +time.minutes);
+        setConvertedCookTime(utils.convertTime(time));
         setCookTimeValue(time);
     }
     function handleServingsSheetClose(serving) {
         setServingsValue(serving);
     }
     function handlePrepTimeSheetClose(time) {
-        setConvertedPrepTime(+time?.hours * 60 + +time.minutes);
+        setConvertedPrepTime(utils.convertTime(time));
         setPrepTimeValue(time);
     }
     function handleTitleDescChange(evt) {

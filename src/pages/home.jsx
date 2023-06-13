@@ -30,7 +30,7 @@ import RecipeCard from '../components/recipe-card';
 import { fetchAllPosts } from '../js/state/slices/post';
 import PostSkeleton from '../components/post-skeleton';
 import { fetchAllRecipes } from '../js/state/slices/recipe';
-const HomePage = ({ f7router }) => {
+const HomePage = ({ f7router, f7route }) => {
     const dispatch = useDispatch();
     const homeSheetRef = useRef(null);
     const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -191,6 +191,8 @@ const HomePage = ({ f7router }) => {
                 allRecipes?.length > 0 &&
                 allRecipes.map((recipe) => (
                     <RecipeCard
+                        f7route={f7route}
+                        f7router={f7router}
                         recipe={recipe}
                         key={crypto.randomUUID()}
                         isInPost={false}

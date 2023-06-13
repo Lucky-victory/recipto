@@ -11,13 +11,22 @@ import {
 import isEmpty from 'just-is-empty';
 import React from 'react';
 import PostCardHeader from './post-card-header';
+import { useDispatch } from 'react-redux';
+import { setOneRecipe } from '../js/state/slices/recipe';
 
 const RecipeCard = ({
     recipe,
     isInPost = true,
     canShowActionBtns = false,
     canShowHeader = false,
+    f7route,f7router
 }) => {
+    const dispatch = useDispatch();
+    function navigateToView() {
+        dispatch(setOneRecipe(recipe));
+        console.log({ f7route,f7router });
+        f7router.navigate(`/recipe/view/${recipe?.id}`);
+    }
     return !isInPost ? (
         <Card className="rt-recipe-card">
             {canShowHeader && <PostCardHeader recipeOrPost={recipe} />}
@@ -29,7 +38,9 @@ const RecipeCard = ({
                     }`}
                 >
                     <Link
-                        href={`/recipe/view/${recipe?.id}`}
+                        onClick={() => navigateToView()}
+                        // routeProps={{ recipe }}
+                        // href={`/recipe/view/${recipe?.id}`}
                         className="rt-recipe-card-content-inner"
                     >
                         {recipe.photo && (
@@ -79,25 +90,27 @@ const RecipeCard = ({
                     </Block>
 
                     <CardFooter className="rt-recipe-card-footer">
-                        <Button round>
-                            <Icon
-                                className="material-symbols-rounded"
-                                material="thumb_up"
-                            />
-                        </Button>
-                        <Button round>
-                            <Icon
-                                className="material-symbols-rounded"
-                                material="chat"
-                            />
-                        </Button>
-                        <Button round>
-                            <Icon
-                                className="material-symbols-rounded"
-                                md="material:share"
-                                ios="material:ios_share"
-                            />
-                        </Button>
+                        <div className="rt-recipe-card-footer-inner">
+                            <Button round>
+                                <Icon
+                                    className="material-symbols-rounded"
+                                    material="thumb_up"
+                                />
+                            </Button>
+                            <Button round>
+                                <Icon
+                                    className="material-symbols-rounded"
+                                    material="chat"
+                                />
+                            </Button>
+                            <Button round>
+                                <Icon
+                                    className="material-symbols-rounded"
+                                    md="material:share"
+                                    ios="material:ios_share"
+                                />
+                            </Button>
+                        </div>
                     </CardFooter>
                 </div>
             )}
@@ -105,6 +118,7 @@ const RecipeCard = ({
     ) : (
         <Card className="rt-recipe-mini-card">
             <Link
+                routeProps={{ recipe }}
                 className="rt-recipe-mini-card-link"
                 href={`/recipe/view/${recipe?.id}`}
             >

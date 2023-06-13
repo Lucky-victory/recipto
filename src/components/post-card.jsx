@@ -58,25 +58,27 @@ const PostCard = ({ post }) => {
             </Block>
 
             <CardFooter className="rt-card-footer">
-                <Button round>
-                    <Icon
-                        className="material-symbols-rounded"
-                        material="thumb_up"
-                    />
-                </Button>
-                <Button round>
-                    <Icon
-                        className="material-symbols-rounded"
-                        material="chat"
-                    />
-                </Button>
-                <Button round>
-                    <Icon
-                        className="material-symbols-rounded"
-                        md="material:share"
-                        ios="material:ios_share"
-                    />
-                </Button>
+                <div className="rt-card-footer-inner">
+                    <Button round>
+                        <Icon
+                            className="material-symbols-rounded"
+                            material="thumb_up"
+                        />
+                    </Button>
+                    <Button round>
+                        <Icon
+                            className="material-symbols-rounded"
+                            material="chat"
+                        />
+                    </Button>
+                    <Button round>
+                        <Icon
+                            className="material-symbols-rounded"
+                            md="material:share"
+                            ios="material:ios_share"
+                        />
+                    </Button>
+                </div>
             </CardFooter>
         </Card>
     );

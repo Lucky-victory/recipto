@@ -5,6 +5,10 @@ const initialState = {
     data: [],
     loading: false,
     error: null,
+    one: {
+        data: {},
+        loading: false,
+    },
 };
 export const fetchAllRecipes = createAsyncThunk(
     'recipes/fetchAllRecipes',
@@ -23,13 +27,15 @@ export const fetchAllRecipes = createAsyncThunk(
 );
 export const fetchOneRecipe = createAsyncThunk(
     'recipes/fetchOneRecipe',
-    async (recipeId, queries) => {
+    async (recipeId, queries = []) => {
         try {
             const resp = await appwriteHandler.databases.getDocument(
                 envConfig.DATABASE_ID,
                 envConfig.RECIPE_COLLECTION_ID,
-                recipeId
+                recipeId,
+                [Query.equal('id', [recipeId])]
             );
+            console.log({ resp });
             return resp;
         } catch (e) {
             throw e;
@@ -39,7 +45,11 @@ export const fetchOneRecipe = createAsyncThunk(
 export const recipesSlice = createSlice({
     name: 'recipes',
     initialState,
-    reducers: {},
+    reducers: {
+        setOneRecipe(state, { payload }) {
+            state.one.data = payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchAllRecipes.pending, (state) => {
@@ -59,11 +69,27 @@ export const recipesSlice = createSlice({
             })
             .addCase(fetchAllRecipes.rejected, (state) => {
                 state.loading = false;
+            })
+            .addCase(fetchOneRecipe.pending, (state) => {
+                state.one.loading = true;
+            })
+            .addCase(fetchOneRecipe.fulfilled, (state, action) => {
+                state.one.loading = false;
+                state.one.data = utils.deSerialize(action.payload, [
+                    'ingredients',
+                    'instructions',
+                    'user',
+                    'prep_time',
+                    'cook_time',
+                ]);
+            })
+            .addCase(fetchOneRecipe.rejected, (state) => {
+                state.one.loading = false;
             });
     },
 });
 
 // Action creators are generated for each case reducer function
-// export const { } = postSlice.actions;
+export const { setOneRecipe } = recipesSlice.actions;
 
 export default recipesSlice.reducer;
