@@ -5,6 +5,7 @@ const device = getDevice();
 export const isMobile = device.ios || device.android;
 import UIAvatarSvg from 'ui-avatar-svg';
 import { Preferences } from '@capacitor/preferences';
+import { Share } from '@capacitor/share';
 export const envConfig = {
     PROJECT_ID: import.meta.env.VITE_APPWRITE_PROJECT_ID,
     BUCKET_ID: import.meta.env.VITE_APPWRITE_BUCKET_ID,
@@ -57,8 +58,17 @@ class Utils {
     get currentDate() {
         return new Date();
     }
-    convertTime(time={hours:0,minutes:0}){
-        return (+time.minutes+ (+time.hours*60))
+    convertTime(time = { hours: 0, minutes: 0 }) {
+        return +time.minutes + +time.hours * 60;
+    }
+    async handleShare({ title = '', text = '', path } = {}) {
+        const url = window.location.href + '/' + path;
+        return await Share.share({
+            text,
+            title,
+            url,
+            dialogTitle: 'Share',
+        });
     }
 }
 export const utils = new Utils();

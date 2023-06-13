@@ -12,9 +12,12 @@ import {
 import isEmpty from 'just-is-empty';
 import PostCardHeader from './post-card-header';
 import RecipeCard from './recipe-card';
-import { useErrorBoundary } from 'react-error-boundary';
+import { utils } from '../js/helper';
 
 const PostCard = ({ post }) => {
+    function handleShare(post) {
+        utils.handleShare({ path: `post/view/${post?.id}` });
+    }
     return (
         <Card className="rt-card">
             <PostCardHeader recipeOrPost={post} />
@@ -65,13 +68,13 @@ const PostCard = ({ post }) => {
                             material="thumb_up"
                         />
                     </Button>
-                    <Button round>
+                    {/* <Button round>
                         <Icon
                             className="material-symbols-rounded"
                             material="chat"
                         />
-                    </Button>
-                    <Button round>
+                    </Button> */}
+                    <Button round onClick={() => handleShare(post)}>
                         <Icon
                             className="material-symbols-rounded"
                             md="material:share"

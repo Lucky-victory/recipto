@@ -13,19 +13,28 @@ import React from 'react';
 import PostCardHeader from './post-card-header';
 import { useDispatch } from 'react-redux';
 import { setOneRecipe } from '../js/state/slices/recipe';
+import { utils } from '../js/helper';
 
 const RecipeCard = ({
     recipe,
     isInPost = true,
     canShowActionBtns = false,
     canShowHeader = false,
-    f7route,f7router
+    f7route,
+    f7router,
 }) => {
     const dispatch = useDispatch();
     function navigateToView() {
         dispatch(setOneRecipe(recipe));
-        console.log({ f7route,f7router });
+
         f7router.navigate(`/recipe/view/${recipe?.id}`);
+    }
+    function handleShare(recipe) {
+        utils.handleShare({
+            title: recipe?.titile,
+            path: `recipe/view/${recipe?.id}`,
+        });
+        // console.log({ shareRes });
     }
     return !isInPost ? (
         <Card className="rt-recipe-card">
@@ -97,13 +106,13 @@ const RecipeCard = ({
                                     material="thumb_up"
                                 />
                             </Button>
-                            <Button round>
+                            {/* <Button round>
                                 <Icon
                                     className="material-symbols-rounded"
                                     material="chat"
                                 />
-                            </Button>
-                            <Button round>
+                            </Button> */}
+                            <Button round onClick={() => handleShare(recipe)}>
                                 <Icon
                                     className="material-symbols-rounded"
                                     md="material:share"
