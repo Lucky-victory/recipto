@@ -27,7 +27,9 @@ class Utils {
     }
     serialize(obj = {}, props = ['user', 'recipe']) {
         for (const prop of props) {
-            obj[prop] = JSON.stringify(JSON.stringify(obj[prop]));
+            if (prop in obj) {
+                obj[prop] = JSON.stringify(JSON.stringify(obj[prop]));
+            }
         }
         return obj;
     }
@@ -43,7 +45,7 @@ class Utils {
         return initials;
     }
     generateAvatar(name, size = 42) {
-        const bgColor = this.generateRandomHexColor('high');
+        const bgColor = this.generateRandomHexColor();
         const svg = new UIAvatarSvg()
             .text(this.getUserNameInitials(name))
             .size(size)

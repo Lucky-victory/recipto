@@ -119,6 +119,7 @@ const HomePage = ({ f7router, f7route }) => {
     }
     function onPageBeforeOut() {
         f7.sheet.close();
+        f7.popover.close();
     }
     // function handleTabShow(tab) {
     //     setActiveTab(tab);
@@ -250,6 +251,7 @@ const HomePage = ({ f7router, f7route }) => {
                 orderedData.map((item) => {
                     return isRecipe(item) ? (
                         <RecipeCard
+                            user={currentUser}
                             f7route={f7route}
                             f7router={f7router}
                             recipe={item}
@@ -260,6 +262,7 @@ const HomePage = ({ f7router, f7route }) => {
                         />
                     ) : (
                         <PostCard
+                            user={currentUser}
                             f7router={f7router}
                             key={crypto.randomUUID()}
                             post={item}

@@ -5,16 +5,22 @@ import {
     CardContent,
     CardFooter,
     CardHeader,
+    Popover,
+    List,
     Icon,
     Link,
 } from 'framework7-react';
 import isEmpty from 'just-is-empty';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PostCardHeader from './post-card-header';
 import { useDispatch } from 'react-redux';
-import { setOneRecipe } from '../js/state/slices/recipe';
+import {
+    dislikeRecipe,
+    likeRecipe,
+    setOneRecipe,
+} from '../js/state/slices/recipe';
 import { utils } from '../js/helper';
-
+import pick from 'just-pick';
 const RecipeCard = ({
     recipe,
     isInPost = true,
@@ -22,24 +28,67 @@ const RecipeCard = ({
     canShowHeader = false,
     f7route,
     f7router,
+    user = {},
 }) => {
+    const popoverId = utils.genID('pop_', false);
     const dispatch = useDispatch();
     function navigateToView() {
         dispatch(setOneRecipe(recipe));
 
         f7router.navigate(`/recipe/view/${recipe?.id}`);
     }
+    const [isLiked, setIsLiked] = useState(alreadyLike());
+    const [likedCount, setLikeCount] = useState(recipe.liked_by?.length);
+
     function handleShare(recipe) {
         utils
             .handleShare({
-                title: recipe?.titile,
+                title: recipe?.title,
                 path: `recipe/view/${recipe?.id}`,
             })
             .then(() => {});
     }
+    useEffect(() => {
+        // setIsLiked(alreadyLike());
+    }, [recipe]);
+    function alreadyLike() {
+        return recipe.liked_by.includes(user?.$id);
+    }
+    function likeOrDislike(recipe) {
+        console.log({ user });
+        if (alreadyLike()) {
+            setIsLiked(false);
+            setLikeCount(likedCount - 1 || 0);
+            dispatch(
+                dislikeRecipe({
+                    userId: user?.$id,
+                    recipeId: recipe.id,
+                    data: pick(recipe, ['id', 'liked_by']),
+                })
+            );
+        } else {
+            setIsLiked(true);
+            setLikeCount(likedCount + 1);
+
+            dispatch(
+                likeRecipe({
+                    userId: user?.$id,
+                    recipeId: recipe.id,
+                    data: pick(recipe, ['id', 'liked_by']),
+                })
+            );
+        }
+    }
+
     return !isInPost ? (
         <Card className="rt-recipe-card">
-            {canShowHeader && <PostCardHeader recipeOrPost={recipe} />}
+            {canShowHeader && (
+                <PostCardHeader
+                    popoverId={popoverId}
+                    user={user}
+                    recipeOrPost={recipe}
+                />
+            )}
 
             {
                 <CardContent
@@ -127,18 +176,24 @@ const RecipeCard = ({
             {canShowActionBtns && (
                 <div>
                     <Block className="mt-4 mb-4">
-                        {recipe.likes_count > 0 && (
+                        {likedCount > 0 && (
                             <Block className="text-grey text-bold text-md">
-                                {recipe.likes_count + ' Likes'}
+                                {likedCount + ' Likes'}
                             </Block>
                         )}
                     </Block>
 
                     <CardFooter className="rt-recipe-card-footer">
                         <div className="rt-recipe-card-footer-inner">
-                            <Button round type="button">
+                            <Button
+                                round
+                                type="button"
+                                onClick={() => likeOrDislike(recipe)}
+                            >
                                 <Icon
-                                    className="material-symbols-rounded"
+                                    className={`material-symbols-rounded ${
+                                        isLiked ? 'material-fill' : ''
+                                    }`}
                                     material="thumb_up"
                                 />
                             </Button>
@@ -163,6 +218,28 @@ const RecipeCard = ({
                     </CardFooter>
                 </div>
             )}
+            <Popover id={popoverId}>
+                <List>
+                    {utils.isSame(recipe?.user?.$id, user?.$id) && (
+                        <Button
+                            text="Edit"
+                            href={`/recipe/edit/${recipe?.id}`}
+                            routeProps={{ mode: 'edit', recipeToEdit: recipe }}
+                        >
+                            <Icon
+                                material="edit"
+                                className="material-symbols-rounded"
+                            />
+                        </Button>
+                    )}
+                    <Button type="button" text="Report">
+                        <Icon
+                            material="flag"
+                            className="material-symbols-rounded"
+                        />
+                    </Button>
+                </List>
+            </Popover>
         </Card>
     ) : (
         <Card className="rt-recipe-mini-card">

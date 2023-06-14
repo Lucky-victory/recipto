@@ -8,16 +8,21 @@ import {
     CardHeader,
     Icon,
     Link,
+    List,
+    Popover,
 } from 'framework7-react';
 import isEmpty from 'just-is-empty';
 import PostCardHeader from './post-card-header';
 import RecipeCard from './recipe-card';
 import { utils } from '../js/helper';
-
+import pick from 'just-pick';
 import { useDispatch } from 'react-redux';
-import { setOnePost } from '../js/state/slices/post';
+import { dislikePost, likePost, setOnePost } from '../js/state/slices/post';
 
-const PostCard = ({ post, f7router }) => {
+const PostCard = ({ post, f7router, user = {} }) => {
+    const popoverId = utils.genID('pop_', false);
+    const [isLiked, setIsLiked] = useState(alreadyLike());
+    const [likedCount, setLikeCount] = useState(post.liked_by?.length);
     const dispatch = useDispatch();
     const [canShowSeeMoreBtn, setCanShowSeeMoreBtn] = useState(
         post && post?.text?.length > 100
@@ -35,9 +40,44 @@ const PostCard = ({ post, f7router }) => {
     function handleSeeMore() {
         setCanShowSeeMoreBtn(false);
     }
+    useEffect(() => {
+        // setIsLiked(alreadyLike());
+    }, [post]);
+    function alreadyLike() {
+        return post.liked_by.includes(user?.$id);
+    }
+    function likeOrDislike(post) {
+        console.log({ user });
+        if (alreadyLike()) {
+            setIsLiked(false);
+            setLikeCount(likedCount - 1 || 0);
+            dispatch(
+                dislikePost({
+                    userId: user?.$id,
+                    postId: post.id,
+                    data: pick(post, ['id', 'liked_by']),
+                })
+            );
+        } else {
+            setIsLiked(true);
+            setLikeCount(likedCount + 1);
+
+            dispatch(
+                likePost({
+                    userId: user?.$id,
+                    postId: post.id,
+                    data: pick(post, ['id', 'liked_by']),
+                })
+            );
+        }
+    }
     return (
         <Card className="rt-card">
-            <PostCardHeader recipeOrPost={post} />
+            <PostCardHeader
+                popoverId={popoverId}
+                user={user}
+                recipeOrPost={post}
+            />
             <div>
                 <CardContent className="rt-card-content">
                     <Link
@@ -86,18 +126,26 @@ const PostCard = ({ post, f7router }) => {
             )}
 
             <Block className="mt-4 mb-4">
-                {post?.likes_count > 0 && (
-                    <Block className="text-grey text-bold text-md">
-                        {post.likes_count + ' Likes'}
-                    </Block>
-                )}
+                <Block className="mt-4 mb-4">
+                    {likedCount > 0 && (
+                        <Block className="text-grey text-bold text-md">
+                            {likedCount + ' Likes'}
+                        </Block>
+                    )}
+                </Block>
             </Block>
 
             <CardFooter className="rt-card-footer">
                 <div className="rt-card-footer-inner">
-                    <Button round type="button">
+                    <Button
+                        round
+                        type="button"
+                        onClick={() => likeOrDislike(post)}
+                    >
                         <Icon
-                            className="material-symbols-rounded"
+                            className={`material-symbols-rounded ${
+                                isLiked ? 'material-fill' : ''
+                            }`}
                             material="thumb_up"
                         />
                     </Button>
@@ -120,6 +168,28 @@ const PostCard = ({ post, f7router }) => {
                     </Button>
                 </div>
             </CardFooter>
+            <Popover id={popoverId}>
+                <List>
+                    {utils.isSame(post?.user?.$id, user?.$id) && (
+                        <Button
+                            text="Edit"
+                            href={`/post/edit/${post?.id}`}
+                            routeProps={{ mode: 'edit', postToEdit: post }}
+                        >
+                            <Icon
+                                material="edit"
+                                className="material-symbols-rounded"
+                            />
+                        </Button>
+                    )}
+                    <Button type="button" text="Report">
+                        <Icon
+                            material="flag"
+                            className="material-symbols-rounded"
+                        />
+                    </Button>
+                </List>
+            </Popover>
         </Card>
     );
 };

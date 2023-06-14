@@ -86,6 +86,10 @@ const routes = [
                 component: RecipeAddPage,
             },
             {
+                path: '/edit/:id',
+                component: RecipeAddPage,
+            },
+            {
                 path: '/view/:id',
                 component: RecipeViewPage,
             },
@@ -98,6 +102,11 @@ const routes = [
         routes: [
             {
                 path: '/add',
+
+                component: PostAddPage,
+            },
+            {
+                path: '/edit/:id',
 
                 component: PostAddPage,
             },

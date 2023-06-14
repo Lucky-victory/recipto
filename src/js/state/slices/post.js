@@ -6,7 +6,7 @@ import {
     storageKeys,
     utils,
 } from '../../helper';
-import { Query } from 'appwrite';
+import { Query, Permission, Role } from 'appwrite';
 const initialState = {
     data: [],
     loading: false,
@@ -31,9 +31,46 @@ export const fetchAllPosts = createAsyncThunk(
         }
     }
 );
+export const likePost = createAsyncThunk(
+    'post/likePost',
+    async ({ postId, data }, { dispatch }) => {
+        try {
+            dispatch(likePostR({ data, userId }));
+
+            const resp = await appwriteHandler.databases.updateDocument(
+                envConfig.DATABASE_ID,
+                envConfig.POST_COLLECTION_ID,
+                postId,
+                data,
+                [Permission.update(Role.users())]
+            );
+            return resp;
+        } catch (e) {
+            throw e;
+        }
+    }
+);
+export const dislikePost = createAsyncThunk(
+    'post/dislikePost',
+    async ({ postId, data }, { dispatch }) => {
+        try {
+            dispatch(dislikePostR({ data, userId }));
+            const resp = await appwriteHandler.databases.updateDocument(
+                envConfig.DATABASE_ID,
+                envConfig.POST_COLLECTION_ID,
+                postId,
+                data,
+                [Permission.update(Role.users())]
+            );
+            return resp;
+        } catch (e) {
+            throw e;
+        }
+    }
+);
 export const fetchOnePost = createAsyncThunk(
     'post/fetchOnePost',
-    async (postId, queries = []) => {
+    async (postId) => {
         try {
             const resp = await appwriteHandler.databases.getDocument(
                 envConfig.DATABASE_ID,
@@ -53,6 +90,32 @@ export const postSlice = createSlice({
     reducers: {
         setOnePost(state, { payload }) {
             state.one.data = payload;
+        },
+        likePostR(state, { payload }) {
+            console.log('like');
+            const doc = state.data.find(
+                (_doc) => _doc.id === payload?.data?.id
+            );
+            if (doc) {
+                doc.liked_by.push(payload?.userId);
+            }
+            state.data = state.data.map((_doc) => {
+                return _doc.id === doc.id ? doc : _doc;
+            });
+        },
+        dislikePostR(state, { payload }) {
+            console.log('dislike');
+            const doc = state.data.find(
+                (_doc) => _doc.id === payload?.data?.id
+            );
+            if (doc) {
+                doc.liked_by = doc.liked_by.filter(
+                    (id) => id !== payload?.userId
+                );
+            }
+            state.data = state.data.map((_doc) => {
+                return _doc.id === doc.id ? doc : _doc;
+            });
         },
     },
     extraReducers: (builder) => {
@@ -78,11 +141,25 @@ export const postSlice = createSlice({
             })
             .addCase(fetchOnePost.rejected, (state) => {
                 state.one.loading = false;
+            })
+            .addCase(likePost.fulfilled, (state, action) => {
+                const doc = utils.deSerialize(action.payload);
+
+                state.data = state.data.map((_doc) => {
+                    return _doc.id === doc.id ? doc : _doc;
+                });
+            })
+            .addCase(dislikePost.fulfilled, (state, action) => {
+                const doc = utils.deSerialize(action.payload);
+
+                state.data = state.data.map((_doc) => {
+                    return _doc.id === doc.id ? doc : _doc;
+                });
             });
     },
 });
 
 // Action creators are generated for each case reducer function
-export const { setOnePost} = postSlice.actions;
+export const { setOnePost, dislikePostR, likePostR } = postSlice.actions;
 
 export default postSlice.reducer;

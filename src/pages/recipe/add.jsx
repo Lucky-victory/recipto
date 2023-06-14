@@ -40,7 +40,7 @@ import isEmpty from 'just-is-empty';
 import PhotoPreviewer from '../../components/photo-previewer';
 
 const $$ = Dom7;
-const RecipeAddPage = ({ f7router }) => {
+const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
     const dispatch = useDispatch();
     const { data: currentUser } = useSelector((state) => state.user);
 
@@ -67,17 +67,20 @@ const RecipeAddPage = ({ f7router }) => {
 
     // console.log({ ingredientsInState, instructionsInState });
 
-    const initialRecipe = {
-        title: '',
-        description: '',
-        ingredients: ingredientsInState,
-        user: {},
-        photo: '',
-        instructions: instructionsInState,
-        cook_time: { hours: 0, minutes: 0 },
-        prep_time: { hours: 0, minutes: 0 },
-        servings: +servingsValue,
-    };
+    const initialRecipe =
+        mode === 'edit'
+            ? recipeToEdit
+            : {
+                  title: '',
+                  description: '',
+                  ingredients: ingredientsInState,
+                  user: {},
+                  photo: '',
+                  instructions: instructionsInState,
+                  cook_time: { hours: 0, minutes: 0 },
+                  prep_time: { hours: 0, minutes: 0 },
+                  servings: +servingsValue,
+              };
     const [recipeToSave, setRecipeToSave] = useState(initialRecipe);
     const [isTitleEmpty, setIsTitleEmpty] = useState(
         isEmpty(recipeToSave.title)
