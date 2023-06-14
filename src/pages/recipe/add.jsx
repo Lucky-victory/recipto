@@ -82,6 +82,7 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
                   prep_time: { hours: 0, minutes: 0 },
                   servings: +servingsValue,
               };
+
     const [recipeToSave, setRecipeToSave] = useState(initialRecipe);
     const [isTitleEmpty, setIsTitleEmpty] = useState(
         isEmpty(recipeToSave.title)
@@ -138,7 +139,7 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
         const newIngredients = [...ingredientsInState];
         const ingredient = newIngredients[index];
 
-        if (value.trim() === '') {
+        if (isEmpty(value)) {
             const filteredContent = ingredient.content.filter(
                 (_, i) => i !== contentIndex
             );
@@ -214,7 +215,7 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
 
         Clipboard.read().then(({ value: pastedText }) => {
             // Split the pasted text into lines
-            const lines = pastedText.split('\n');
+            const lines = pastedText.split('\n\r');
             console.log({ lines, pastedText });
             for (let line of lines) {
                 console.log({ line });
@@ -236,7 +237,7 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
         const newInstructions = [...instructionsInState];
         const instruction = newInstructions[index];
 
-        if (value.trim() === '') {
+        if (isEmpty(value)) {
             const filteredContent = instruction.content.filter(
                 (_, i) => i !== contentIndex
             );

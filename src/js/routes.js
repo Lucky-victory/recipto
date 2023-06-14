@@ -1,5 +1,4 @@
 import HomePage from '../pages/home.jsx';
-import AboutPage from '../pages/about.jsx';
 import NotFoundPage from '../pages/404.jsx';
 import NewRecipePage from '../pages/new-recipe-page.jsx';
 
@@ -16,6 +15,7 @@ import { appwriteHandler } from './helper.js';
 
 import RecipeViewPage from '../pages/recipe/view.jsx';
 import PostViewPage from '../pages/post/view.jsx';
+import ProfilePage from '../pages/profile.jsx';
 
 const device = getDevice();
 
@@ -52,10 +52,7 @@ const routes = [
         path: '/',
         redirect: checkGuestRedirect,
     },
-    {
-        path: '/about/',
-        component: AboutPage,
-    },
+
     {
         alias: ['/join/', '/login/'],
         path: '/signin/',
@@ -71,6 +68,20 @@ const routes = [
     {
         path: '/verify/',
         component: VerifyUserPage,
+    },
+    {
+        alias: ['/profile'],
+        path: '/profile/',
+        routes: [
+            {
+                component: ProfilePage,
+                path: '/me',
+            },
+            {
+                component: ProfilePage,
+                path: '/user/:id',
+            },
+        ],
     },
     {
         alias: ['/welcome', '/onboard/'],

@@ -185,7 +185,7 @@ const HomePage = ({ f7router, f7route }) => {
                 <NavRight style={{ paddingRight: 24 }}>
                     <div className="flex jc-center mt-2 mb-a">
                         {/* <Button text="log" onClick={() => logout()} /> */}
-                        <Avatar link={'/about/'} user={currentUser} />
+                        <Avatar link={'/profile/me'} user={currentUser} />
                     </div>
                 </NavRight>
             </Navbar>
