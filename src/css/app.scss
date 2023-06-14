@@ -209,6 +209,14 @@
 
 Global styles
 **/
+
+.rt-logo-wrap {
+    height: 100px;
+    .rt-logo {
+        height: 100%;
+        object-fit: cover;
+    }
+}
 .rt-segmented-tab {
     border-radius: unset;
     z-index: 10;
@@ -229,6 +237,7 @@ Global styles
     padding: 0;
     padding-top: 1rem;
     height: auto;
+    margin-bottom: 3rem;
 }
 .rt-photo-preview {
     height: 250px;
@@ -284,7 +293,10 @@ Global styles
     min-height: 80px;
     font-weight: 600;
 }
-.rt-ing-item {
+.rt-ing-item,
+.rt-ins-item {
+    --f7-list-item-text-line-height: 20px;
+    --f7-list-item-text-max-lines: 4;
     &:hover {
         .rt-ing-delete-btn {
             visibility: visible;

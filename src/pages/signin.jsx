@@ -2,7 +2,6 @@ import {
     Block,
     BlockTitle,
     Button,
-    Icon,
     Link,
     List,
     ListInput,
@@ -12,16 +11,13 @@ import {
 } from 'framework7-react';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
-    AppStorage,
     appwriteHandler,
     isMobile,
-    storageKeys,
     utils,
 } from '../js/helper';
 import '@/css/signin-up.scss';
-import { Preferences } from '@capacitor/preferences';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser, updateUser } from '../js/state/slices/user';
+import { fetchUser } from '../js/state/slices/user';
 import isEmpty from 'just-is-empty';
 const SignInPage = ({ f7router }) => {
     const initialForm = {
@@ -81,7 +77,8 @@ const SignInPage = ({ f7router }) => {
         try {
             const res = appwriteHandler.account.createOAuth2Session(
                 'google',
-                utils.mainURL + '/home/'
+                utils.mainURL + '/home/',
+                utils.mainURL + '/signin/'
             );
         } catch (e) {
             setIsSubmitting(false);

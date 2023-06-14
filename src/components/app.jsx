@@ -29,7 +29,7 @@ const MyApp = () => {
         colors: {
             primary: '#4caf50',
         },
-        darkMode: 'auto',
+        darkMode: 'dark',
         popup: {
             closeByBackdropClick: false,
             backdropUnique: true,
@@ -44,12 +44,12 @@ const MyApp = () => {
         routes: routes,
 
         // Register service worker (only on production build)
-        serviceWorker:
-            process.env.NODE_ENV === 'production'
-                ? {
-                      path: '/service-worker.js',
-                  }
-                : {},
+        // serviceWorker:
+        //     process.env.NODE_ENV === 'production'
+        //         ? {
+        //               path: '/service-worker.js',
+        //           }
+        //         : {},
         // Input settings
         input: {
             scrollIntoViewOnFocus: device.capacitor,

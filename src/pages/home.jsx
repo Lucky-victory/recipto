@@ -17,6 +17,7 @@ import {
     Navbar,
     NavRight,
     f7,
+    NavLeft,
 } from 'framework7-react';
 
 import '@/css/home.scss';
@@ -142,6 +143,7 @@ const HomePage = ({ f7router, f7route }) => {
         setTimeout(() => {
             f7router.navigate('/signin/', {
                 clearPreviousHistory: true,
+                reloadPrevious: true,
             });
         }, 1000);
     }
@@ -171,9 +173,18 @@ const HomePage = ({ f7router, f7route }) => {
             className="rt-home-page"
         >
             <Navbar className="rt-navbar">
-                <NavRight style={{ paddingRight: 16 }}>
-                    <div className="flex jc-center mt-a mb-a">
-                        <Button text="log" onClick={() => logout()} />
+                <NavLeft>
+                    <div className="rt-logo-wrap">
+                        <img
+                            src="/images/logo-1.png"
+                            alt=""
+                            className="rt-logo lg"
+                        />
+                    </div>
+                </NavLeft>
+                <NavRight style={{ paddingRight: 24 }}>
+                    <div className="flex jc-center mt-2 mb-a">
+                        {/* <Button text="log" onClick={() => logout()} /> */}
                         <Avatar link={'/about/'} user={currentUser} />
                     </div>
                 </NavRight>

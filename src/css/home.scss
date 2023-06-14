@@ -1,31 +1,31 @@
-.rt-toolbar-wrap {
-    background: var(--f7-card-bg-color);
-    padding-right: 1rem;
-    display: flex;
-    gap: 1rem;
-    .rt-toolbar {
-        --f7-toolbar-bg-color: var(--f7-card-bg-color);
-        --f7-toolbar-text-color: var(--f7-md-primary);
-        --f7-tabbar-link-active-color: var(--f7-md-primary);
+// .rt-toolbar-wrap {
+//     background: var(--f7-card-bg-color);
+//     padding-right: 1rem;
+//     display: flex;
+//     gap: 1rem;
+//     .rt-toolbar {
+//         --f7-toolbar-bg-color: var(--f7-card-bg-color);
+//         --f7-toolbar-text-color: var(--f7-md-primary);
+//         --f7-tabbar-link-active-color: var(--f7-md-primary);
 
-        // background-color: var(--f7-tabbar-link-active-bg-color, transparent);
-        --f7-toolbar-font-size: 20px;
-        height: var(--f7-toolbar-height);
-        background-color: var(--f7-toolbar-bg-color, var(--f7-bars-bg-color));
-        color: var(--f7-toolbar-text-color, var(--f7-bars-text-color));
-        .toolbar-inner {
-            max-width: 500px;
-            gap: 0.5rem;
-            .tab-link {
-                display: flex !important;
-            }
-            .tab-link-highlight {
-                height: 4px !important;
-                border-radius: 1rem;
-            }
-        }
-    }
-}
+//         // background-color: var(--f7-tabbar-link-active-bg-color, transparent);
+//         --f7-toolbar-font-size: 20px;
+//         height: var(--f7-toolbar-height);
+//         background-color: var(--f7-toolbar-bg-color, var(--f7-bars-bg-color));
+//         color: var(--f7-toolbar-text-color, var(--f7-bars-text-color));
+//         .toolbar-inner {
+//             max-width: 500px;
+//             gap: 0.5rem;
+//             .tab-link {
+//                 display: flex !important;
+//             }
+//             .tab-link-highlight {
+//                 height: 4px !important;
+//                 border-radius: 1rem;
+//             }
+//         }
+//     }
+// }
 .rt-home-page {
     .page-content {
         padding-bottom: 4rem;
@@ -78,5 +78,3 @@
     }
 }
 
-.rt-svg-avatar {
-}
