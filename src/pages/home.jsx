@@ -31,6 +31,7 @@ import { fetchAllPosts } from '../js/state/slices/post';
 import PostSkeleton from '../components/post-skeleton';
 import { fetchAllRecipes } from '../js/state/slices/recipe';
 import isEmpty from 'just-is-empty';
+import orderBy from 'just-order-by';
 const HomePage = ({ f7router, f7route }) => {
     const dispatch = useDispatch();
     const homeSheetRef = useRef(null);
@@ -44,7 +45,18 @@ const HomePage = ({ f7router, f7route }) => {
     const { data: allRecipes, loading: recipeLoading } = useSelector(
         (state) => state.recipes
     );
-
+    const mergedData = [...allPosts, ...allRecipes];
+    const orderedData = orderBy(mergedData, [
+        {
+            property(d) {
+                return new Date(d?.created_at).getTime();
+            },
+            order: 'desc',
+        },
+    ]);
+    function isRecipe(item) {
+        return 'title' in item;
+    }
     const fetchUserCb = useCallback(() => {
         dispatch(fetchUser());
     }, []);
@@ -204,7 +216,7 @@ const HomePage = ({ f7router, f7route }) => {
                 </Block>
             )}
 
-            {!recipeLoading &&
+            {/* {!recipeLoading &&
                 allRecipes?.length > 0 &&
                 allRecipes.map((recipe) => (
                     <RecipeCard
@@ -223,8 +235,37 @@ const HomePage = ({ f7router, f7route }) => {
                   ))
                 : allPosts.length > 0 &&
                   allPosts.map((post, index) => (
-                      <PostCard key={crypto.randomUUID()} post={post} />
-                  ))}
+                      <PostCard
+                          f7router={f7router}
+                          key={crypto.randomUUID()}
+                          post={post}
+                      />
+                  ))} */}
+            {(postLoading || recipeLoading) &&
+                !orderedData?.length > 0 &&
+                [1, 2, 3, 4, 5].map(() => (
+                    <PostSkeleton key={crypto.randomUUID()} />
+                ))}
+            {orderedData.length > 0 &&
+                orderedData.map((item) => {
+                    return isRecipe(item) ? (
+                        <RecipeCard
+                            f7route={f7route}
+                            f7router={f7router}
+                            recipe={item}
+                            key={crypto.randomUUID()}
+                            isInPost={false}
+                            canShowActionBtns
+                            canShowHeader
+                        />
+                    ) : (
+                        <PostCard
+                            f7router={f7router}
+                            key={crypto.randomUUID()}
+                            post={item}
+                        />
+                    );
+                })}
             {isMobile && (
                 <Fab
                     slot="fixed"

@@ -3,7 +3,7 @@
     max-width: 100%;
     width: 600px;
     margin: 1rem auto;
-    padding: 0.5rem;
+    // padding: 0.5rem;
     margin-top: var(--f7-navbar-large-title-height);
     overflow: hidden;
 
@@ -11,6 +11,8 @@
         border-radius: 12px !important;
         height: 100%;
         width: calc(100% - 1rem);
+        margin: auto;
+        display: block;
         object-fit: cover;
     }
 }

@@ -126,7 +126,9 @@
 .ai-center {
     align-items: center;
 }
-
+.radius-sm {
+    border-radius: 6px;
+}
 .text-center {
     text-align: center;
 }
@@ -423,11 +425,12 @@ Global styles
     .rt-recipe-card-content-footer {
         border-top: 1px solid #bdbbbb;
         padding: 0.75rem;
-        font-size: 1.15rem;
+        font-size: 1.125rem;
         font-weight: 500;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        // justify-content: space-between;
+        flex-direction: column;
+
         background: rgba(var(--f7-theme-color-rgb), 0.05);
     }
 }

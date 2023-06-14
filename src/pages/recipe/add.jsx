@@ -554,27 +554,28 @@ const RecipeAddPage = ({ f7router }) => {
                         </Link>
                     </Block> */}
                 </List>
+            </List>
 
-                <List mediaList className="mt-2 mb-2">
-                    <ListItem
-                        className="rt-list-title"
-                        mediaItem
-                        subtitle={
-                            isMobile
-                                ? 'Tap to edit, swipe to delete.'
-                                : 'Click to edit'
-                        }
-                        title={'Instructions'}
-                    />
+            <List mediaList className="mt-2 mb-2">
+                <ListItem
+                    className="rt-list-title"
+                    mediaItem
+                    subtitle={
+                        isMobile
+                            ? 'Tap to edit, swipe to delete.'
+                            : 'Click to edit'
+                    }
+                    title={'Instructions'}
+                />
 
-                    {instructionsInState.map((instruction, index) => {
-                        return (
-                            <List
-                                mediaList
-                                className="mt-2 mb-2"
-                                key={crypto.randomUUID()}
-                            >
-                                {/* {!isEmpty(ingredient.header) && (
+                {instructionsInState.map((instruction, index) => {
+                    return (
+                        <List
+                            mediaList
+                            className="mt-2 mb-2"
+                            key={crypto.randomUUID()}
+                        >
+                            {/* {!isEmpty(ingredient.header) && (
                                     <ListItem
                                         groupTitle
                                         value={ingredient.header}
@@ -588,115 +589,115 @@ const RecipeAddPage = ({ f7router }) => {
                                         clearButton
                                     />
                                 )} */}
-                                {instruction.content.map(
-                                    (content, contentIndex) => {
-                                        return instructionEditIndex &&
-                                            instructionEditIndex.index ===
-                                                index &&
-                                            instructionEditIndex.contentIndex ===
-                                                contentIndex ? (
-                                            <ListInput
-                                                outline
-                                                autofocus={
-                                                    instructionEditIndex.contentIndex ===
+                            {instruction.content.map(
+                                (content, contentIndex) => {
+                                    return instructionEditIndex &&
+                                        instructionEditIndex.index === index &&
+                                        instructionEditIndex.contentIndex ===
+                                            contentIndex ? (
+                                        <ListInput
+                                            outline
+                                            autofocus={
+                                                instructionEditIndex.contentIndex ===
+                                                contentIndex
+                                            }
+                                            clearButton
+                                            onBlur={(e) =>
+                                                handleInstructionTextContentBlur(
+                                                    index,
+                                                    contentIndex,
+                                                    e.target.value
+                                                )
+                                            }
+                                            key={crypto.randomUUID()}
+                                            value={content.text}
+                                            onChange={(e) =>
+                                                handleInstructionTextContentChange(
+                                                    index,
+                                                    contentIndex,
+                                                    e.target.value
+                                                )
+                                            }
+                                        />
+                                    ) : (
+                                        <ListItem
+                                            className="rt-ing-item text-grey"
+                                            key={crypto.randomUUID()}
+                                            onSwipeoutDeleted={() =>
+                                                handleInstructionSwipeOutDelete(
+                                                    index,
                                                     contentIndex
-                                                }
-                                                clearButton
-                                                onBlur={(e) =>
-                                                    handleInstructionTextContentBlur(
-                                                        index,
-                                                        contentIndex,
-                                                        e.target.value
-                                                    )
-                                                }
-                                                key={crypto.randomUUID()}
-                                                value={content.text}
-                                                onChange={(e) =>
-                                                    handleInstructionTextContentChange(
-                                                        index,
-                                                        contentIndex,
-                                                        e.target.value
-                                                    )
-                                                }
-                                            />
-                                        ) : (
-                                            <ListItem
-                                                className="rt-ing-item text-grey"
-                                                key={crypto.randomUUID()}
-                                                onSwipeoutDeleted={() =>
-                                                    handleInstructionSwipeOutDelete(
-                                                        index,
-                                                        contentIndex
-                                                    )
-                                                }
-                                                onClick={() =>
-                                                    handleInstructionContentClick(
-                                                        index,
-                                                        contentIndex
-                                                    )
-                                                }
-                                                media={
-                                                    content?.media
-                                                        ? content?.media
-                                                        : null
-                                                }
-                                                noChevron
-                                                link
-                                                swipeout
-                                                title={content?.text}
-                                            >
-                                                {isMobile ? (
-                                                    <SwipeoutActions right>
-                                                        <SwipeoutButton delete>
-                                                            Delete
-                                                        </SwipeoutButton>
-                                                    </SwipeoutActions>
-                                                ) : (
-                                                    <Button
-                                                        className="rt-ing-delete-btn"
-                                                        type="button"
-                                                        onClick={() =>
-                                                            handleInstructionSwipeOutDelete(
-                                                                index,
-                                                                contentIndex
-                                                            )
-                                                        }
-                                                        iconOnly
-                                                        slot="after"
-                                                        style={{
-                                                            height: 20,
-                                                        }}
-                                                    >
-                                                        <Icon
-                                                            className="material-symbols-rounded"
-                                                            material="close"
-                                                            tooltip="delete"
-                                                        />
-                                                    </Button>
-                                                )}
-                                                {!content?.media && (
+                                                )
+                                            }
+                                            onClick={() =>
+                                                handleInstructionContentClick(
+                                                    index,
+                                                    contentIndex
+                                                )
+                                            }
+                                            media={
+                                                content?.media
+                                                    ? content?.media
+                                                    : null
+                                            }
+                                            noChevron
+                                            link
+                                            swipeout
+                                            title={content?.text}
+                                        >
+                                            {isMobile ? (
+                                                <SwipeoutActions right>
+                                                    <SwipeoutButton delete>
+                                                        Delete
+                                                    </SwipeoutButton>
+                                                </SwipeoutActions>
+                                            ) : (
+                                                <Button
+                                                    className="rt-ing-delete-btn"
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleInstructionSwipeOutDelete(
+                                                            index,
+                                                            contentIndex
+                                                        )
+                                                    }
+                                                    iconOnly
+                                                    slot="after"
+                                                    style={{
+                                                        height: 20,
+                                                    }}
+                                                >
                                                     <Icon
-                                                        slot="media"
-                                                        className="material-symbols-rounded "
-                                                        material="integration_instructions"
+                                                        className="material-symbols-rounded"
+                                                        material="close"
+                                                        tooltip="delete"
                                                     />
-                                                )}
-                                            </ListItem>
-                                        );
-                                    }
-                                )}
-                            </List>
-                        );
-                    })}
-                </List>
-                <List className="mt-0 mb-2">
-                    <ListInput
-                        className="rt-list-input rt-instructions-input"
-                        clearButton
-                        outline
-                        placeholder="Add or paste instructions"
-                    />
-                    {/* <Block className="mt-2 mb-0">
+                                                </Button>
+                                            )}
+                                            {!content?.media && (
+                                                <Icon
+                                                    slot="media"
+                                                    className="material-symbols-rounded "
+                                                    material="integration_instructions"
+                                                />
+                                            )}
+                                        </ListItem>
+                                    );
+                                }
+                            )}
+                        </List>
+                    );
+                })}
+            </List>
+
+            <List className="mt-0 mb-2">
+                <ListInput
+                    className="rt-list-input rt-instructions-input"
+                    clearButton
+                    outline
+                    placeholder="Add or paste instructions"
+                />
+                {/* <Block className="mt-2 mb-0">
                         <Link className="ov-hidden">
                             <Icon
                                 className="material-symbols-rounded"
@@ -705,61 +706,58 @@ const RecipeAddPage = ({ f7router }) => {
                             Add Header
                         </Link>
                     </Block> */}
-                </List>
-                <List mediaList noChevron>
-                    <ListItem
-                        title={'Servings'}
-                        // subtitle={
-                        //     'How long does it take to prepare this recipe?'
-                        // }
-                    >
-                        <Link
-                            slot="after"
-                            {...(!isMobile
-                                ? { popoverOpen: '.servings-sheet' }
-                                : { sheetOpen: '.servings-sheet' })}
-                            text={`${
-                                servingsValue > 0
-                                    ? servingsValue + ' servings'
-                                    : 'Set servings'
-                            }`}
-                        />
-                    </ListItem>
-                    <ListItem
-                        title={'Prep Time'}
-                        subtitle={
-                            'How long does it take to prepare this recipe?'
-                        }
-                    >
-                        <Link
-                            slot="after"
-                            {...(!isMobile
-                                ? { popoverOpen: '.prep-time' }
-                                : { sheetOpen: '.prep-time' })}
-                            text={`${
-                                convertedPrepTime > 0
-                                    ? convertedPrepTime + ' mins'
-                                    : 'Set time'
-                            }`}
-                        />
-                    </ListItem>
-                    <ListItem
-                        title={'Cook Time'}
-                        subtitle={'How long does it take to cook this recipe?'}
-                    >
-                        <Link
-                            slot="after"
-                            {...(!isMobile
-                                ? { popoverOpen: '.cook-time' }
-                                : { sheetOpen: '.cook-time' })}
-                            text={`${
-                                convertedCookTime > 0
-                                    ? convertedCookTime + ' mins'
-                                    : 'Set Time'
-                            }`}
-                        />
-                    </ListItem>
-                </List>
+            </List>
+            <List mediaList noChevron>
+                <ListItem
+                    title={'Servings'}
+                    // subtitle={
+                    //     'How long does it take to prepare this recipe?'
+                    // }
+                >
+                    <Link
+                        slot="after"
+                        {...(!isMobile
+                            ? { popoverOpen: '.servings-sheet' }
+                            : { sheetOpen: '.servings-sheet' })}
+                        text={`${
+                            servingsValue > 0
+                                ? servingsValue + ' servings'
+                                : 'Set servings'
+                        }`}
+                    />
+                </ListItem>
+                <ListItem
+                    title={'Prep Time'}
+                    subtitle={'How long does it take to prepare this recipe?'}
+                >
+                    <Link
+                        slot="after"
+                        {...(!isMobile
+                            ? { popoverOpen: '.prep-time' }
+                            : { sheetOpen: '.prep-time' })}
+                        text={`${
+                            convertedPrepTime > 0
+                                ? convertedPrepTime + ' mins'
+                                : 'Set time'
+                        }`}
+                    />
+                </ListItem>
+                <ListItem
+                    title={'Cook Time'}
+                    subtitle={'How long does it take to cook this recipe?'}
+                >
+                    <Link
+                        slot="after"
+                        {...(!isMobile
+                            ? { popoverOpen: '.cook-time' }
+                            : { sheetOpen: '.cook-time' })}
+                        text={`${
+                            convertedCookTime > 0
+                                ? convertedCookTime + ' mins'
+                                : 'Set Time'
+                        }`}
+                    />
+                </ListItem>
             </List>
             <ServingSheet
                 initialValue={servingsValue}

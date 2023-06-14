@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Block,
     Button,
@@ -14,9 +14,26 @@ import PostCardHeader from './post-card-header';
 import RecipeCard from './recipe-card';
 import { utils } from '../js/helper';
 
-const PostCard = ({ post }) => {
+import { useDispatch } from 'react-redux';
+import { setOnePost } from '../js/state/slices/post';
+
+const PostCard = ({ post, f7router }) => {
+    const dispatch = useDispatch();
+    const [canShowSeeMoreBtn, setCanShowSeeMoreBtn] = useState(
+        post && post?.text?.length > 100
+    );
+    function navigateToView(evt) {
+        if (evt.target.className.includes('see-more-btn')) return;
+        dispatch(setOnePost(post));
+
+        f7router.navigate(`/post/view/${post?.id}`);
+    }
     function handleShare(post) {
         utils.handleShare({ path: `post/view/${post?.id}` }).then(() => {});
+    }
+
+    function handleSeeMore() {
+        setCanShowSeeMoreBtn(false);
     }
     return (
         <Card className="rt-card">
@@ -24,13 +41,29 @@ const PostCard = ({ post }) => {
             <div>
                 <CardContent className="rt-card-content">
                     <Link
-                        href={`/post/view/${post?.id}`}
+                        onClick={navigateToView}
+                        // href={`/post/view/${post?.id}`}
                         className="rt-card-content-inner"
                     >
-                        <Block className="text-md ">
-                            <div className="mb-4">{post?.text || ''}</div>
-                        </Block>
-
+                        {post?.text && (
+                            <Block className={`text-md `}>
+                                <div
+                                    className={`mb-2 rt-post-text ${
+                                        !canShowSeeMoreBtn ? 'full' : ''
+                                    }`}
+                                >
+                                    {post?.text || ' '}
+                                </div>
+                                {canShowSeeMoreBtn && (
+                                    <span
+                                        className="text-bold text-grey see-more-btn"
+                                        onClick={handleSeeMore}
+                                    >
+                                        See more
+                                    </span>
+                                )}
+                            </Block>
+                        )}
                         {post.photo && (
                             <div className="rt-card-img-wrap">
                                 <img
