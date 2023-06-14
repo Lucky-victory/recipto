@@ -60,10 +60,13 @@ class Utils {
     get currentDate() {
         return new Date();
     }
+    isSame(userId, currentUserId) {
+        return userId === currentUserId;
+    }
     convertTime(time = { hours: 0, minutes: 0 }) {
         return +time.minutes + +time.hours * 60;
     }
-    generateRandomHexColor(contrast = 'high') {
+    generateRandomHexColor(contrast = 'average') {
         // Function to generate a random hex digit
         function getRandomHexDigit() {
             const hexDigits = '0123456789ABCDEF';

@@ -102,9 +102,19 @@ const RecipeViewPage = ({ f7router }) => {
                     </div>
                 )}
             </Block>
+            <Block>
+                <BlockTitle>Description</BlockTitle>
+
+                {recipe?.description}
+            </Block>
             <Segmented className="rt-segmented rt-segmented-tab" strong>
-                <Button text="Ingredients" tabLink="#ing-tab" tabLinkActive />
-                <Button text="Instructions" tabLink="#ins-tab" />
+                <Button
+                    type="button"
+                    text="Ingredients"
+                    tabLink="#ing-tab"
+                    tabLinkActive
+                />
+                <Button type="button" text="Instructions" tabLink="#ins-tab" />
             </Segmented>
             <Tabs animated>
                 <Tab tabActive id={'ing-tab'}>

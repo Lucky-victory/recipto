@@ -70,9 +70,44 @@ const RecipeCard = ({
 
                         <div className="rt-recipe-card-content-footer">
                             <div className="rt-recipe-card-content-title">
-                                <span className="text-bold">
+                                <span className="text-bol">
                                     {recipe?.title}
                                 </span>
+                            </div>
+                            <div className="mt-4 flex ai-center gap-2">
+                                <div className="text-sm flex ai-center">
+                                    <Icon
+                                        size={18}
+                                        material="people"
+                                        className="text-color-primary  material-symbols-rounded"
+                                    />
+
+                                    <span className="text-grey ">
+                                        {recipe?.servings}
+                                    </span>
+                                </div>
+                                <div className="text-sm flex ai-center">
+                                    <Icon
+                                        size={18}
+                                        material="pace"
+                                        className=" text-color-primary material-symbols-rounded"
+                                    />
+
+                                    <span className="text-grey ">
+                                        {utils.convertTime(recipe?.prep_time)}
+                                    </span>
+                                </div>
+                                <div className="text-sm flex ai-center">
+                                    <Icon
+                                        size={18}
+                                        material="cooking"
+                                        className=" text-color-primary material-symbols-rounded"
+                                    />
+
+                                    <span className="text-grey ">
+                                        {utils.convertTime(recipe?.cook_time)}
+                                    </span>
+                                </div>
                             </div>
                             {/* <Button
                                 style={{ maxWidth: '3rem' }}

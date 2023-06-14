@@ -1,0 +1,22 @@
+.rt-post-img-wrap {
+    max-height: 500px;
+    img {
+        max-height: inherit;
+        width: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+}
+@media all and (max-width: 568px) {
+    .rt-post-img-wrap {
+        max-height: 400px;
+    }
+}
+.rt-post-text {
+    height: 50px;
+    overflow: hidden;
+    position: relative;
+    &.full {
+        height: auto;
+    }
+}

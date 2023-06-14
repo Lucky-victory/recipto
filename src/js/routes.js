@@ -36,15 +36,15 @@ function checkGuestRedirect({ to, resolve, reject }) {
         });
 }
 function checkAuth(event, page) {
-    console.log({ event, page });
+    // console.log({ event, page });
 }
 const routes = [
     {
         path: '/home/',
         component: HomePage,
-        on: {
-            pageBeforeIn: checkAuth,
-        },
+        // on: {
+        //     pageBeforeIn: checkAuth,
+        // },
         // beforeEnter: checkAuth,
     },
     {

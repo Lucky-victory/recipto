@@ -11,6 +11,10 @@ const initialState = {
     data: [],
     loading: false,
     error: null,
+    one: {
+        loading: false,
+        data: {},
+    },
 };
 export const fetchAllPosts = createAsyncThunk(
     'post/fetchAllPosts',
@@ -29,12 +33,13 @@ export const fetchAllPosts = createAsyncThunk(
 );
 export const fetchOnePost = createAsyncThunk(
     'post/fetchOnePost',
-    async (postId, queries) => {
+    async (postId, queries = []) => {
         try {
             const resp = await appwriteHandler.databases.getDocument(
                 envConfig.DATABASE_ID,
                 envConfig.POST_COLLECTION_ID,
-                postId
+                postId,
+                [Query.equal('id', postId)]
             );
             return resp;
         } catch (e) {
@@ -45,7 +50,11 @@ export const fetchOnePost = createAsyncThunk(
 export const postSlice = createSlice({
     name: 'post',
     initialState,
-    reducers: {},
+    reducers: {
+        setOnePost(state, { payload }) {
+            state.one.data = payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchAllPosts.pending, (state) => {
@@ -59,11 +68,21 @@ export const postSlice = createSlice({
             })
             .addCase(fetchAllPosts.rejected, (state) => {
                 state.loading = false;
+            })
+            .addCase(fetchOnePost.pending, (state) => {
+                state.one.loading = true;
+            })
+            .addCase(fetchOnePost.fulfilled, (state, action) => {
+                state.one.loading = false;
+                state.one.data = utils.deSerialize(action.payload);
+            })
+            .addCase(fetchOnePost.rejected, (state) => {
+                state.one.loading = false;
             });
     },
 });
 
 // Action creators are generated for each case reducer function
-// export const { } = postSlice.actions;
+export const { setOnePost} = postSlice.actions;
 
 export default postSlice.reducer;
