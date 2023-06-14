@@ -322,6 +322,7 @@ Global styles
     .time-swiper {
         // background: #000;
         .swiper-slide {
+            min-width: 60px;
             display: flex;
             align-items: center;
             justify-content: center;

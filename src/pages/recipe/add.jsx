@@ -551,41 +551,40 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
                                                 noChevron
                                                 link
                                                 swipeout
-                                                text={content?.text}
+                                                title={content?.text}
                                             >
-                                                {isMobile ? (
-                                                    <SwipeoutActions right>
-                                                        <SwipeoutButton delete>
-                                                            Delete
-                                                        </SwipeoutButton>
-                                                    </SwipeoutActions>
-                                                ) : (
-                                                    <Button
-                                                        className="rt-ing-delete-btn"
-                                                        type="button"
-                                                        onClick={() =>
-                                                            handleIngredientSwipeOutDelete(
-                                                                index,
-                                                                contentIndex
-                                                            )
-                                                        }
-                                                        iconOnly
-                                                        slot="after"
-                                                        style={{
-                                                            height: 20,
-                                                        }}
-                                                    >
-                                                        <Icon
-                                                            className="material-symbols-rounded"
-                                                            material="close"
-                                                            tooltip="delete"
-                                                        />
-                                                    </Button>
-                                                )}
+                                                <SwipeoutActions right>
+                                                    <SwipeoutButton delete>
+                                                        Delete
+                                                    </SwipeoutButton>
+                                                </SwipeoutActions>
+
+                                                {/* // <Button
+                                                    //     className="rt-ing-delete-btn"
+                                                    //     type="button"
+                                                    //     onClick={() =>
+                                                    //         handleIngredientSwipeOutDelete(
+                                                    //             index,
+                                                    //             contentIndex
+                                                    //         )
+                                                    //     }
+                                                    //     iconOnly
+                                                    //     slot="after"
+                                                    //     style={{
+                                                    //         height: 20,
+                                                    //     }}
+                                                    // >
+                                                    //     <Icon
+                                                    //         className="material-symbols-rounded"
+                                                    //         material="close"
+                                                    //         tooltip="delete"
+                                                    //     />
+                                                    // </Button> */}
+
                                                 {!content?.media && (
                                                     <Icon
                                                         slot="media"
-                                                        className="material-symbols-rounded material-fill"
+                                                        className="material-symbols-rounded"
                                                         material="shopping_basket"
                                                     />
                                                 )}
@@ -703,37 +702,13 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
                                             noChevron
                                             link
                                             swipeout
-                                            text={content?.text}
+                                            title={content?.text}
                                         >
-                                            {isMobile ? (
-                                                <SwipeoutActions right>
-                                                    <SwipeoutButton delete>
-                                                        Delete
-                                                    </SwipeoutButton>
-                                                </SwipeoutActions>
-                                            ) : (
-                                                <Button
-                                                    className="rt-ing-delete-btn"
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleInstructionSwipeOutDelete(
-                                                            index,
-                                                            contentIndex
-                                                        )
-                                                    }
-                                                    iconOnly
-                                                    slot="after"
-                                                    style={{
-                                                        height: 20,
-                                                    }}
-                                                >
-                                                    <Icon
-                                                        className="material-symbols-rounded"
-                                                        material="close"
-                                                        tooltip="delete"
-                                                    />
-                                                </Button>
-                                            )}
+                                            <SwipeoutActions right>
+                                                <SwipeoutButton delete>
+                                                    Delete
+                                                </SwipeoutButton>
+                                            </SwipeoutActions>
                                             {!content?.media && (
                                                 <Icon
                                                     slot="media"

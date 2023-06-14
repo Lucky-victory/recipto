@@ -19,7 +19,7 @@ import {
     likeRecipe,
     setOneRecipe,
 } from '../js/state/slices/recipe';
-import { utils } from '../js/helper';
+import { isMobile, utils } from '../js/helper';
 import pick from 'just-pick';
 const RecipeCard = ({
     recipe,
@@ -40,13 +40,11 @@ const RecipeCard = ({
     const [isLiked, setIsLiked] = useState(alreadyLike());
     const [likedCount, setLikeCount] = useState(recipe.liked_by?.length);
 
-    function handleShare(recipe) {
-        utils
-            .handleShare({
-                title: recipe?.title,
-                path: `recipe/view/${recipe?.id}`,
-            })
-            .then(() => {});
+    async function handleShare(recipe) {
+        await utils.handleShare({
+            title: recipe?.title,
+            path: `recipe/view/${recipe?.id}`,
+        });
     }
     useEffect(() => {
         // setIsLiked(alreadyLike());
@@ -124,9 +122,13 @@ const RecipeCard = ({
                                 </span>
                             </div>
                             <div className="mt-4 flex ai-center gap-2">
-                                <div className="text-sm flex ai-center">
+                                <div
+                                    className={`${
+                                        isMobile ? 'text-sm' : ''
+                                    } flex ai-center`}
+                                >
                                     <Icon
-                                        size={18}
+                                        size={isMobile ? 18 : 24}
                                         material="people"
                                         className="text-color-primary  material-symbols-rounded"
                                     />
@@ -135,9 +137,13 @@ const RecipeCard = ({
                                         {recipe?.servings}
                                     </span>
                                 </div>
-                                <div className="text-sm flex ai-center">
+                                <div
+                                    className={`${
+                                        isMobile ? 'text-sm' : ''
+                                    } flex ai-center`}
+                                >
                                     <Icon
-                                        size={18}
+                                        size={isMobile ? 18 : 24}
                                         material="pace"
                                         className=" text-color-primary material-symbols-rounded"
                                     />
@@ -146,9 +152,13 @@ const RecipeCard = ({
                                         {utils.convertTime(recipe?.prep_time)}
                                     </span>
                                 </div>
-                                <div className="text-sm flex ai-center">
+                                <div
+                                    className={`${
+                                        isMobile ? 'text-sm' : ''
+                                    } flex ai-center`}
+                                >
                                     <Icon
-                                        size={18}
+                                        size={isMobile ? 18 : 24}
                                         material="cooking"
                                         className=" text-color-primary material-symbols-rounded"
                                     />
