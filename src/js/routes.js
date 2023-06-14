@@ -41,6 +41,7 @@ function checkAuth(event, page) {
 const routes = [
     {
         path: '/home/',
+        alias: ['/home'],
         component: HomePage,
         // on: {
         //     pageBeforeIn: checkAuth,
@@ -72,17 +73,21 @@ const routes = [
         component: VerifyUserPage,
     },
     {
-        alias: '/onboard/',
+        alias: ['/welcome', '/onboard/'],
         path: '/welcome/',
         component: OnboardingPage,
     },
     {
         path: '/recipe/',
-        component: NewRecipePage,
+        // component: NewRecipePage,
 
         routes: [
             {
                 path: '/add',
+                component: RecipeAddPage,
+            },
+            {
+                path: '/edit/:id',
                 component: RecipeAddPage,
             },
             {
@@ -93,11 +98,16 @@ const routes = [
     },
     {
         path: '/post/',
-        component: NewPostPage,
+        // component: NewPostPage,
 
         routes: [
             {
                 path: '/add',
+
+                component: PostAddPage,
+            },
+            {
+                path: '/edit/:id',
 
                 component: PostAddPage,
             },

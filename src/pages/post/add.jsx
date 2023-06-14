@@ -25,7 +25,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '../../js/state/slices/user';
 import pick from 'just-pick';
 
-const PostAddPage = ({ f7router }) => {
+const PostAddPage = ({ f7router, mode = 'create', postToEdit = {} }) => {
     const dispatch = useDispatch();
     const [isLoadingPhoto, setIsLoadingPhoto] = useState(false);
     const { data: currentUser, loading: userLoading } = useSelector(
@@ -33,15 +33,18 @@ const PostAddPage = ({ f7router }) => {
     );
     console.log({ currentUser, userLoading });
     const postId = utils.genID(undefined, false);
-    const initialPost = {
-        text: '',
-        photo: '',
-        has_recipe: false,
-        recipe: {},
-        user: {},
-        created_at: '',
-        updated_at: '',
-    };
+    const initialPost =
+        mode === 'edit'
+            ? postToEdit
+            : {
+                  text: '',
+                  photo: '',
+                  has_recipe: false,
+                  recipe: {},
+                  user: {},
+                  created_at: '',
+                  updated_at: '',
+              };
     const [post, setPost] = useState(initialPost);
 
     const [isEmptyPost, setIsEmptyPost] = useState(false);
@@ -249,7 +252,6 @@ const PostAddPage = ({ f7router }) => {
                     id="photo-input"
                     type="file"
                     accept="image/*"
-                    
                 />
                 <Block>
                     <Button

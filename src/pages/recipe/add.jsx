@@ -38,9 +38,10 @@ import {
 } from '../../js/state/slices/instructions';
 import isEmpty from 'just-is-empty';
 import PhotoPreviewer from '../../components/photo-previewer';
+import { Clipboard } from '@capacitor/clipboard';
 
 const $$ = Dom7;
-const RecipeAddPage = ({ f7router }) => {
+const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
     const dispatch = useDispatch();
     const { data: currentUser } = useSelector((state) => state.user);
 
@@ -67,17 +68,20 @@ const RecipeAddPage = ({ f7router }) => {
 
     // console.log({ ingredientsInState, instructionsInState });
 
-    const initialRecipe = {
-        title: '',
-        description: '',
-        ingredients: ingredientsInState,
-        user: {},
-        photo: '',
-        instructions: instructionsInState,
-        cook_time: { hours: 0, minutes: 0 },
-        prep_time: { hours: 0, minutes: 0 },
-        servings: +servingsValue,
-    };
+    const initialRecipe =
+        mode === 'edit'
+            ? recipeToEdit
+            : {
+                  title: '',
+                  description: '',
+                  ingredients: ingredientsInState,
+                  user: {},
+                  photo: '',
+                  instructions: instructionsInState,
+                  cook_time: { hours: 0, minutes: 0 },
+                  prep_time: { hours: 0, minutes: 0 },
+                  servings: +servingsValue,
+              };
     const [recipeToSave, setRecipeToSave] = useState(initialRecipe);
     const [isTitleEmpty, setIsTitleEmpty] = useState(
         isEmpty(recipeToSave.title)
@@ -92,7 +96,7 @@ const RecipeAddPage = ({ f7router }) => {
 
     /* Ingredients inputs script start */
 
-    function addHeader() {
+    function addIngredientHeader() {
         const newIngredients = [
             ...ingredientsInState,
             { header: '', content: [] },
@@ -100,6 +104,24 @@ const RecipeAddPage = ({ f7router }) => {
 
         dispatch(updateIngredients(newIngredients));
         setCurrentIngredIndex(newIngredients.length - 1 || 0);
+    }
+    function addInstructionHeader() {
+        const newInstructions = [
+            ...instructionsInState,
+            { header: '', content: [] },
+        ];
+
+        dispatch(updateInstructions(newInstructions));
+        setCurrentInstructionIndex(newInstructions.length - 1 || 0);
+    }
+    function addInstructionDesc(index, contentIndex, value) {
+        const newInstructions = [
+            ...instructionsInState,
+            { header: '', content: [] },
+        ];
+
+        dispatch(updateInstructions(newInstructions));
+        setCurrentInstructionIndex(newInstructions.length - 1 || 0);
     }
 
     function handleHeaderChange(index, value) {
@@ -141,12 +163,26 @@ const RecipeAddPage = ({ f7router }) => {
      */
     function handleIngredientsAdd(evt) {
         const { value } = evt.target;
-        if (evt.key === 'Enter' && !evt.shiftKey && value.trim() !== '') {
+        if (evt.key === 'Enter' && !evt.shiftKey && !isEmpty(value)) {
+            evt.preventDefault();
             addIngredientTextContent(value);
             evt.target.value = '';
         }
     }
+    async function handleIngredientsPaste(evt) {
+        evt.preventDefault();
+        const { value: pastedText } = await Clipboard.read();
+        // console.log({ pastedText });
+        // Split the pasted text into lines
+        const lines = pastedText.split('\n');
+        for (let line of lines) {
+            addIngredientTextContent(line);
+        }
+
+        evt.target.value = '';
+    }
     function addIngredientTextContent(text) {
+        if (isEmpty(text)) return;
         dispatch(addIngredientContent({ text, index: currentIngredIndex }));
     }
     function handleIngredientSwipeOutDelete(index, contentIndex) {
@@ -168,11 +204,27 @@ const RecipeAddPage = ({ f7router }) => {
     function handleInstructionsAdd(evt) {
         const { value } = evt.target;
         if (evt.key === 'Enter' && !evt.shiftKey && value.trim() !== '') {
+            evt.preventDefault();
             addInstructionTextContent(value);
             evt.target.value = '';
         }
     }
+    function handleInstructionsPaste(evt) {
+        evt.preventDefault();
+
+        Clipboard.read().then(({ value: pastedText }) => {
+            // Split the pasted text into lines
+            const lines = pastedText.split('\n');
+            console.log({ lines, pastedText });
+            for (let line of lines) {
+                console.log({ line });
+                addInstructionTextContent(line);
+                evt.target.value = '';
+            }
+        });
+    }
     function addInstructionTextContent(text) {
+        if (isEmpty(text)) return;
         dispatch(
             addInstructionContent({ text, index: currentInstructionIndex })
         );
@@ -223,28 +275,33 @@ const RecipeAddPage = ({ f7router }) => {
     }, [dispatch, ingredientsInState, instructionsInState]);
 
     useEffect(() => {
-        const ingredientInput = $$('.rt-ingredient-input');
+        const ingredientInput = $$('#rt-ingredient-input').eq(0);
+        const instructionsInput = $$('#rt-instructions-input').eq(0);
         ingredientInput.on('keydown', handleIngredientsAdd);
-        const instructionsInput = $$('.rt-instructions-input');
         instructionsInput.on('keydown', handleInstructionsAdd);
+        ingredientInput.on('paste', (evt) => handleIngredientsPaste(evt));
+        instructionsInput.on('paste', (evt) => handleInstructionsPaste(evt));
 
         return () => {
             ingredientInput.off('keydown', handleIngredientsAdd);
 
             instructionsInput.off('keydown', handleInstructionsAdd);
+            ingredientInput.off('paste', handleIngredientsPaste);
+
+            instructionsInput.off('paste', handleInstructionsPaste);
         };
     }, []);
     useEffect(() => {
-        setRecipeToSave((prev) => ({
-            ...prev,
-            ingredients: ingredientsInState,
-        }));
+        // setRecipeToSave((prev) => ({
+        //     ...prev,
+        //     ingredients: ingredientsInState,
+        // }));
     }, [ingredientsInState]);
     useEffect(() => {
-        setRecipeToSave((prev) => ({
-            ...prev,
-            instructions: instructionsInState,
-        }));
+        // setRecipeToSave((prev) => ({
+        //     ...prev,
+        //     instructions: instructionsInState,
+        // }));
     }, [instructionsInState]);
     useEffect(() => {
         setIsTitleEmpty(isEmpty(recipeToSave.title));
@@ -310,23 +367,25 @@ const RecipeAddPage = ({ f7router }) => {
                 'cook_time',
                 'prep_time',
             ]);
-            const saved = await appwriteHandler.databases.createDocument(
+            await appwriteHandler.databases.createDocument(
                 envConfig.DATABASE_ID,
                 envConfig.RECIPE_COLLECTION_ID,
                 recipeId,
                 recip
             );
-            console.log({ recip, saved });
+            // console.log({ recip, saved });
             f7.toast.show({
                 text: 'Recipe saved successfully',
                 closeButton: true,
                 closeTimeout: 2500,
+                position: 'top',
             });
             dispatch(resetIngredients());
             dispatch(resetInstructions());
             setRecipeToSave(initialRecipe);
             setServingsValue(0);
-
+            setConvertedCookTime({ hours: 0, minutes: 0 });
+            setConvertedPrepTime({ hours: 0, minutes: 0 });
             setIsSaving(false);
         } catch (e) {
             setIsSaving(false);
@@ -492,7 +551,7 @@ const RecipeAddPage = ({ f7router }) => {
                                                 noChevron
                                                 link
                                                 swipeout
-                                                title={content?.text}
+                                                text={content?.text}
                                             >
                                                 {isMobile ? (
                                                     <SwipeoutActions right>
@@ -539,7 +598,8 @@ const RecipeAddPage = ({ f7router }) => {
                     })}
                 <List className="mt-0 mb-2">
                     <ListInput
-                        className="rt-list-input rt-ingredient-input"
+                        id={'rt-ingredient-input'}
+                        className="rt-list-input "
                         clearButton
                         outline
                         placeholder="Add or paste ingredients"
@@ -621,7 +681,7 @@ const RecipeAddPage = ({ f7router }) => {
                                         />
                                     ) : (
                                         <ListItem
-                                            className="rt-ing-item text-grey"
+                                            className="rt-ins-item ai-center text-grey"
                                             key={crypto.randomUUID()}
                                             onSwipeoutDeleted={() =>
                                                 handleInstructionSwipeOutDelete(
@@ -643,7 +703,7 @@ const RecipeAddPage = ({ f7router }) => {
                                             noChevron
                                             link
                                             swipeout
-                                            title={content?.text}
+                                            text={content?.text}
                                         >
                                             {isMobile ? (
                                                 <SwipeoutActions right>
@@ -692,7 +752,8 @@ const RecipeAddPage = ({ f7router }) => {
 
             <List className="mt-0 mb-2">
                 <ListInput
-                    className="rt-list-input rt-instructions-input"
+                    className="rt-list-input"
+                    id={'rt-instructions-input'}
                     clearButton
                     outline
                     placeholder="Add or paste instructions"
