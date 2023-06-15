@@ -422,9 +422,18 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
             setConvertedCookTime({ hours: 0, minutes: 0 });
             setConvertedPrepTime({ hours: 0, minutes: 0 });
             setIsSaving(false);
+            setTimeout(() => {
+                redirectAfterPosting();
+            }, 2000);
         } catch (e) {
             setIsSaving(false);
         }
+    }
+    function redirectAfterPosting() {
+        f7.popup.close();
+        f7router.navigate('/home/', {
+            clearPreviousHistory: true,
+        });
     }
     return (
         <Page name="recipe-add" className="custom-bg">
