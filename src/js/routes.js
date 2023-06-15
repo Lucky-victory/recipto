@@ -25,42 +25,35 @@ function checkGuestRedirect({ to, resolve, reject }) {
         .get()
         .then((user) => {
             if (!user) {
-                resolve('/signin/');
+                resolve('/onboard/');
             } else {
-                resolve('/home/');
+                resolve('/h');
             }
         })
         .catch((e) => {
-            resolve('/signin/');
+            resolve('/onboard/');
             console.log('error redirect', { e });
         });
 }
-function checkAuth(event, page) {
-    // console.log({ event, page });
-}
+
 const routes = [
-    {
-        path: '/home/',
-        alias: ['/home'],
-        component: HomePage,
-        // on: {
-        //     pageBeforeIn: checkAuth,
-        // },
-        // beforeEnter: checkAuth,
-    },
     {
         path: '/',
         redirect: checkGuestRedirect,
     },
-
     {
-        alias: ['/join/', '/login/'],
+        path: '/home/',
+        alias: ['/home', '/h'],
+        component: HomePage,
+    },
+    {
+        alias: ['/login/'],
         path: '/signin/',
         component: SignInPage,
         // beforeEnter: checkGuest,
     },
     {
-        alias: '/register/',
+        alias: ['/register/', '/join/', '/join'],
         path: '/signup/',
         // beforeEnter: checkGuest,
         component: SignupPage,

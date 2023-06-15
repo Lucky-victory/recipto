@@ -90,9 +90,9 @@ const OnboardingPage = () => {
                         </div>
                     </Block>
                 </div>
-                <Block>
+                {/* <Block>
                     <div className="flex flex-wrap"></div>
-                </Block>
+                </Block> */}
             </PageContent>
         </Page>
     );

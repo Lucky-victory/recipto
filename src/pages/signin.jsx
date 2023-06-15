@@ -10,11 +10,7 @@ import {
     f7,
 } from 'framework7-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-    appwriteHandler,
-    isMobile,
-    utils,
-} from '../js/helper';
+import { appwriteHandler, isMobile, utils } from '../js/helper';
 import '@/css/signin-up.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '../js/state/slices/user';
@@ -43,7 +39,7 @@ const SignInPage = ({ f7router }) => {
     async function handleFormSubmit(ev) {
         ev.preventDefault();
         setIsSubmitting(true);
-        setErrorMessage('')
+        setErrorMessage('');
         try {
             await appwriteHandler.account.createEmailSession(
                 signInForm.email,
@@ -59,7 +55,7 @@ const SignInPage = ({ f7router }) => {
                 closeTimeout: 2000,
             });
             setTimeout(() => {
-                f7router.navigate('/home/');
+                f7router.navigate('/');
             }, 2000);
 
             // console.log({ newUser, tt });
@@ -77,7 +73,7 @@ const SignInPage = ({ f7router }) => {
         try {
             const res = appwriteHandler.account.createOAuth2Session(
                 'google',
-                utils.mainURL + '/home/',
+                utils.mainURL + '/',
                 utils.mainURL + '/signin/'
             );
         } catch (e) {
@@ -88,7 +84,7 @@ const SignInPage = ({ f7router }) => {
     function onPageBeforeIn() {
         fetchUserCb();
         if (!isEmpty(currentUser)) {
-            f7router.navigate('/home/');
+            f7router.navigate('/');
         }
     }
     useEffect(() => {
@@ -148,7 +144,7 @@ const SignInPage = ({ f7router }) => {
                                 <Button
                                     type="submit"
                                     large
-                                    text="Sign Up"
+                                    text="Continue"
                                     fill
                                     disabled={isSubmitting}
                                     preloader

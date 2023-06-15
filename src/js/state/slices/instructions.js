@@ -9,11 +9,16 @@ export const InstructionSlice = createSlice({
     initialState,
     reducers: {
         getInstructions: (state) => {
-            return state.data;
+            state.data = state.data;
         },
         updateInstructions: (state, { payload }) => {
             state.data = payload;
         },
+        updateInstructionContentFull: (state, action) => {
+            const { index, newContent } = action.payload;
+            state.data[index].content = newContent;
+        },
+
         addInstructionContent: (state, { payload }) => {
             state.data[payload?.index].content.push({
                 media: '',
@@ -35,7 +40,9 @@ export const {
     updateInstructions,
     getInstructions,
     addInstructionContent,
-    updateInstructionContent,resetInstructions
+    updateInstructionContent,
+    resetInstructions,
+    updateInstructionContentFull,
 } = InstructionSlice.actions;
 
 export default InstructionSlice.reducer;

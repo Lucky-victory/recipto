@@ -138,15 +138,15 @@ const HomePage = ({ f7router, f7route }) => {
             openIn: !isMobile ? 'popup' : undefined,
         });
     }
-    function logout() {
-        dispatch(dropUser());
-        setTimeout(() => {
-            f7router.navigate('/signin/', {
-                clearPreviousHistory: true,
-                reloadPrevious: true,
-            });
-        }, 1000);
-    }
+    // function logout() {
+    //     dispatch(dropUser());
+    //     setTimeout(() => {
+    //         f7router.navigate('/signin/', {
+    //             clearPreviousHistory: true,
+    //             reloadPrevious: true,
+    //         });
+    //     }, 1000);
+    // }
 
     useEffect(() => {
         fetchUserCb();

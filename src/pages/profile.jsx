@@ -2,24 +2,39 @@ import {
     Block,
     BlockTitle,
     Button,
+    Icon,
+    Link,
+    NavRight,
     NavTitle,
     NavTitleLarge,
     Navbar,
     Page,
     PageContent,
+    Popover,
     Segmented,
     SkeletonAvatar,
     Tab,
     Tabs,
+    f7,
 } from 'framework7-react';
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { utils } from '../js/helper';
 import Avatar from '../components/avatar';
+import { dropUser } from '../js/state/slices/user';
 
-const ProfilePage = ({ user = {} }) => {
+const ProfilePage = ({ user = {}, f7router }) => {
     const { data: currentUser } = useSelector((state) => state.user);
-
+    const dispatch = useDispatch();
+    function logout() {
+        dispatch(dropUser());
+        setTimeout(() => {
+            f7router.navigate('/onboard/', {
+                clearPreviousHistory: true,
+            });
+        }, 1000);
+        f7.popover.close();
+    }
     return (
         <Page name="profile" className="custom-bg">
             <Navbar outline sliding={false} backLink>
@@ -41,6 +56,22 @@ const ProfilePage = ({ user = {} }) => {
                         </div>
                     </div>
                 </NavTitleLarge>
+                {utils.isSame(user?.$id, currentUser?.$id) && (
+                    <NavRight>
+                        <Link iconOnly popoverOpen="#rt-more">
+                            <Icon
+                                className="material-symbols-rounded"
+                                material="more_vert"
+                            />
+                        </Link>
+                        <Popover id={'rt-more'}>
+                            <Button
+                                text="Logout"
+                                onClick={() => logout()}
+                            ></Button>
+                        </Popover>
+                    </NavRight>
+                )}
             </Navbar>
             <PageContent className="rt-profile-tab-content">
                 <Block strong className="mb-0">
@@ -55,7 +86,7 @@ const ProfilePage = ({ user = {} }) => {
 
                 <Block className="">
                     <div className="flex ai-center jc-center">
-                        {utils.isSame(user?.$id, currentUser?.$id) && (
+                        {utils.isSame(user?.$id, currentUser?.$id) ? (
                             <div className="text-center">
                                 <BlockTitle large className="text-grey">
                                     You don't have any activity yet
@@ -63,6 +94,16 @@ const ProfilePage = ({ user = {} }) => {
                                 <span className="text-grey">
                                     {' '}
                                     Your post or recipes will show up here
+                                </span>
+                            </div>
+                        ) : (
+                            <div className="text-center">
+                                <BlockTitle large className="text-grey">
+                                    No activity yet
+                                </BlockTitle>
+                                <span className="text-grey">
+                                    {' '}
+                                    {user?.name} has not shared anything.
                                 </span>
                             </div>
                         )}

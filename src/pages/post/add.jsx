@@ -179,22 +179,21 @@ const PostAddPage = ({ f7router, mode = 'create', postToEdit = {} }) => {
                 )}
                 <NavTitle title="Your Post" />
                 <NavRight style={{ paddingRight: '1rem' }}>
-                    {isMobile && (
-                        <Button
-                            disabled={isEmptyPost || isSubmitting}
-                            preloader
-                            loading={isSubmitting}
-                            fill
-                            onClick={() => SubmitPost()}
-                            round
-                            style={{ minWidth: '5rem' }}
-                        >
-                            Post
-                        </Button>
-                    )}
                     {!isMobile && (
                         <Button large text="Close" onClick={handlePopupOpen} />
                     )}
+
+                    <Button
+                        disabled={isEmptyPost || isSubmitting}
+                        preloader
+                        loading={isSubmitting}
+                        fill
+                        onClick={() => SubmitPost()}
+                        round
+                        style={{ minWidth: '5rem' }}
+                    >
+                        Post
+                    </Button>
                 </NavRight>
             </Navbar>
             <List>
@@ -279,7 +278,7 @@ const PostAddPage = ({ f7router, mode = 'create', postToEdit = {} }) => {
                         <span>Recipe</span>
                     </Button> */}
                 </Block>
-
+                {/* 
                 {!isMobile && (
                     <Block>
                         <Button
@@ -293,7 +292,7 @@ const PostAddPage = ({ f7router, mode = 'create', postToEdit = {} }) => {
                             Post
                         </Button>
                     </Block>
-                )}
+                )} */}
             </List>
             <PageExitPopup
                 onCancel={() => handlePopupClose()}

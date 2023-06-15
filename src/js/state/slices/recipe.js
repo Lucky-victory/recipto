@@ -91,7 +91,7 @@ export const recipesSlice = createSlice({
             state.one.data = payload;
         },
         likeRecipeR(state, { payload }) {
-            console.log( 'like');
+            console.log('like');
             const doc = state.data.find(
                 (_doc) => _doc.id === payload?.data?.id
             );
@@ -155,7 +155,7 @@ export const recipesSlice = createSlice({
                     'prep_time',
                     'cook_time',
                 ]);
-                console.log({ action, doc });
+                // console.log({ action, doc });
                 state.data = state.data.map((_doc) => {
                     return _doc.id === doc.id ? doc : _doc;
                 });

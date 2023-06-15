@@ -10,11 +10,7 @@ import {
     f7,
 } from 'framework7-react';
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-    appwriteHandler,
-    isMobile,
-    utils,
-} from '../js/helper';
+import { appwriteHandler, isMobile, utils } from '../js/helper';
 import '@/css/signin-up.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchUser } from '../js/state/slices/user';
@@ -85,7 +81,7 @@ const SignUpPage = ({ f7router }) => {
         try {
             const res = appwriteHandler.account.createOAuth2Session(
                 'google',
-                utils.mainURL + '/home/',
+                utils.mainURL + '/',
                 utils.mainURL + '/signup/'
             );
         } catch (e) {
@@ -95,7 +91,7 @@ const SignUpPage = ({ f7router }) => {
     }
     function onPageBeforeIn() {
         if (!isEmpty(currentUser)) {
-            f7router.navigate('/home/');
+            f7router.navigate('/');
         }
         console.log({ currentUser });
     }

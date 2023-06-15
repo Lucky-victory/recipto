@@ -14,7 +14,7 @@ import {
     f7,
 } from 'framework7-react';
 import { Dom7 } from 'framework7';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { isMobile } from '@/js/helper';
 import PageExitPopup from '../../components/page-exit-popup';
 import TimeSheet from '../../components/time-sheet';
@@ -29,11 +29,14 @@ import {
     updateIngredients,
     updateIngredientContent,
     resetIngredients,
+    getIngredients,
 } from '../../js/state/slices/ingredient';
 import {
     addInstructionContent,
+    getInstructions,
     resetInstructions,
     updateInstructionContent,
+    updateInstructionContentFull,
     updateInstructions,
 } from '../../js/state/slices/instructions';
 import isEmpty from 'just-is-empty';
@@ -42,6 +45,9 @@ import { Clipboard } from '@capacitor/clipboard';
 
 const $$ = Dom7;
 const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
+    const input1Ref = useRef(null);
+    const input2Ref = useRef(null);
+    console.log({ input1Ref, input2Ref });
     const dispatch = useDispatch();
     const { data: currentUser } = useSelector((state) => state.user);
 
@@ -63,8 +69,13 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
         (state) => state.ingredients
     );
     const fetchUserCb = useCallback(() => {
-        fetchUser();
-    }, []);
+        dispatch(fetchUser());
+    }, [currentUser]);
+    // const fetchIngredientsCb = useCallback(() => {
+    // }, []);
+    // const fetchInstructionsCb = useCallback(() => {
+
+    // }, []);
 
     // console.log({ ingredientsInState, instructionsInState });
 
@@ -82,8 +93,9 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
                   prep_time: { hours: 0, minutes: 0 },
                   servings: +servingsValue,
               };
-
+    console.log({ initialRecipe });
     const [recipeToSave, setRecipeToSave] = useState(initialRecipe);
+    console.log('near initial', { recipeToSave });
     const [isTitleEmpty, setIsTitleEmpty] = useState(
         isEmpty(recipeToSave.title)
     );
@@ -170,17 +182,18 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
             evt.target.value = '';
         }
     }
-    async function handleIngredientsPaste(evt) {
-        evt.preventDefault();
-        const { value: pastedText } = await Clipboard.read();
-        // console.log({ pastedText });
-        // Split the pasted text into lines
-        const lines = pastedText.split('\n');
-        for (let line of lines) {
-            addIngredientTextContent(line);
-        }
+    function handleIngredientsPaste(evt) {
+        // evt.preventDefault();
+        Clipboard.read().then(({ value: pastedText }) => {
+            // console.log({ pastedText });
+            // Split the pasted text into lines
+            const lines = pastedText.split('\n');
+            for (let line of lines) {
+                addIngredientTextContent(line);
+            }
 
-        evt.target.value = '';
+            evt.target.value = '';
+        });
     }
     function addIngredientTextContent(text) {
         if (isEmpty(text)) return;
@@ -215,13 +228,14 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
 
         Clipboard.read().then(({ value: pastedText }) => {
             // Split the pasted text into lines
-            const lines = pastedText.split('\n\r');
+            const lines = pastedText.split('\n');
             console.log({ lines, pastedText });
+
             for (let line of lines) {
                 console.log({ line });
                 addInstructionTextContent(line);
-                evt.target.value = '';
             }
+            evt.target.value = '';
         });
     }
     function addInstructionTextContent(text) {
@@ -273,37 +287,54 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
     useEffect(() => {
         fetchUserCb();
         console.log({ currentUser });
-    }, [dispatch, ingredientsInState, instructionsInState]);
+    }, [ingredientsInState, instructionsInState]);
 
     useEffect(() => {
-        const ingredientInput = $$('#rt-ingredient-input').eq(0);
-        const instructionsInput = $$('#rt-instructions-input').eq(0);
-        ingredientInput.on('keydown', handleIngredientsAdd);
-        instructionsInput.on('keydown', handleInstructionsAdd);
-        ingredientInput.on('paste', (evt) => handleIngredientsPaste(evt));
-        instructionsInput.on('paste', (evt) => handleInstructionsPaste(evt));
+        const ingredientInput = input1Ref.current.el.querySelector(
+            '#rt-ingredient-input'
+        );
+        const instructionsInput = input2Ref.current.el.querySelector(
+            '#rt-instructions-input'
+        );
+
+        ingredientInput.addEventListener('keydown', handleIngredientsAdd);
+        instructionsInput.addEventListener('keydown', handleInstructionsAdd);
+        ingredientInput.addEventListener('paste', handleIngredientsPaste);
+        instructionsInput.addEventListener('paste', handleInstructionsPaste);
 
         return () => {
-            ingredientInput.off('keydown', handleIngredientsAdd);
+            ingredientInput.removeEventListener(
+                'keydown',
+                handleIngredientsAdd
+            );
 
-            instructionsInput.off('keydown', handleInstructionsAdd);
-            ingredientInput.off('paste', handleIngredientsPaste);
+            instructionsInput.removeEventListener(
+                'keydown',
+                handleInstructionsAdd
+            );
+            ingredientInput.removeEventListener(
+                'paste',
+                handleIngredientsPaste
+            );
 
-            instructionsInput.off('paste', handleInstructionsPaste);
+            instructionsInput.removeEventListener(
+                'paste',
+                handleInstructionsPaste
+            );
         };
     }, []);
     useEffect(() => {
-        // setRecipeToSave((prev) => ({
-        //     ...prev,
-        //     ingredients: ingredientsInState,
-        // }));
-    }, [ingredientsInState]);
+        setRecipeToSave((prev) => ({
+            ...prev,
+            ingredients: ingredientsInState,
+        }));
+    }, [initialRecipe.ingredients]);
     useEffect(() => {
-        // setRecipeToSave((prev) => ({
-        //     ...prev,
-        //     instructions: instructionsInState,
-        // }));
-    }, [instructionsInState]);
+        setRecipeToSave((prev) => ({
+            ...prev,
+            instructions: instructionsInState,
+        }));
+    }, [initialRecipe.instructions]);
     useEffect(() => {
         setIsTitleEmpty(isEmpty(recipeToSave.title));
     }, [recipeToSave.title]);
@@ -359,8 +390,11 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
                 id: recipeId,
                 created_at: utils.currentDate.toISOString(),
                 updated_at: utils.currentDate.toISOString(),
+
                 user: pick(currentUser, ['prefs', 'name', '$id']),
             };
+            console.log({ recipeToSave });
+
             const recip = utils.serialize(_recipeToSave, [
                 'instructions',
                 'ingredients',
@@ -598,7 +632,8 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
                     })}
                 <List className="mt-0 mb-2">
                     <ListInput
-                        id={'rt-ingredient-input'}
+                        ref={input1Ref}
+                        inputId={'rt-ingredient-input'}
                         className="rt-list-input "
                         clearButton
                         outline
@@ -728,8 +763,9 @@ const RecipeAddPage = ({ f7router, mode = 'create', recipeToEdit = {} }) => {
 
             <List className="mt-0 mb-2">
                 <ListInput
+                    ref={input2Ref}
                     className="rt-list-input"
-                    id={'rt-instructions-input'}
+                    inputId={'rt-instructions-input'}
                     clearButton
                     outline
                     placeholder="Add or paste instructions"
