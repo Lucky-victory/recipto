@@ -22,7 +22,8 @@ const PostCardHeader = ({
         <CardHeader className="rt-card-header">
             <div className="flex jc-center ">
                 <Link
-                    href="#"
+                    routeProps={{ user: recipeOrPost?.user }}
+                    href={`/profile/user/${recipeOrPost?.user?.$id}`}
                     // add link to user profile
                     className="rt-card-header-link flex jc-center ov-hidden flex-grow"
                 >

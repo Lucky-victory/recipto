@@ -9,7 +9,7 @@ export const ingredientsSlice = createSlice({
     initialState,
     reducers: {
         getIngredients: (state) => {
-            return state.data;
+             state.data=state.data;
         },
         updateIngredients: (state, { payload }) => {
             state.data = payload;

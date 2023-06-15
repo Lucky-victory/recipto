@@ -17,6 +17,7 @@ const PrepTimeSheet = ({
         slidesPerView: 3,
         direction: 'vertical',
         centeredSlides: true,
+        loop: true,
     };
     const [addedClassName, setAddedClassName] = useState(className);
 
@@ -61,7 +62,7 @@ const PrepTimeSheet = ({
                         </SwiperSlide>
                     ))}
                 </Swiper>
-                ,
+
                 <Swiper
                     onSlideChange={(sw) =>
                         handleTimeSwiperChange('minutes', sw)

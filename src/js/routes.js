@@ -1,5 +1,4 @@
 import HomePage from '../pages/home.jsx';
-import AboutPage from '../pages/about.jsx';
 import NotFoundPage from '../pages/404.jsx';
 import NewRecipePage from '../pages/new-recipe-page.jsx';
 
@@ -16,6 +15,7 @@ import { appwriteHandler } from './helper.js';
 
 import RecipeViewPage from '../pages/recipe/view.jsx';
 import PostViewPage from '../pages/post/view.jsx';
+import ProfilePage from '../pages/profile.jsx';
 
 const device = getDevice();
 
@@ -25,45 +25,35 @@ function checkGuestRedirect({ to, resolve, reject }) {
         .get()
         .then((user) => {
             if (!user) {
-                resolve('/signin/');
+                resolve('/onboard/');
             } else {
-                resolve('/home/');
+                resolve('/h');
             }
         })
         .catch((e) => {
-            resolve('/signin/');
+            resolve('/onboard/');
             console.log('error redirect', { e });
         });
 }
-function checkAuth(event, page) {
-    // console.log({ event, page });
-}
+
 const routes = [
-    {
-        path: '/home/',
-        alias: ['/home'],
-        component: HomePage,
-        // on: {
-        //     pageBeforeIn: checkAuth,
-        // },
-        // beforeEnter: checkAuth,
-    },
     {
         path: '/',
         redirect: checkGuestRedirect,
     },
     {
-        path: '/about/',
-        component: AboutPage,
+        path: '/home/',
+        alias: ['/home', '/h'],
+        component: HomePage,
     },
     {
-        alias: ['/join/', '/login/'],
+        alias: ['/login/'],
         path: '/signin/',
         component: SignInPage,
         // beforeEnter: checkGuest,
     },
     {
-        alias: '/register/',
+        alias: ['/register/', '/join/', '/join'],
         path: '/signup/',
         // beforeEnter: checkGuest,
         component: SignupPage,
@@ -71,6 +61,20 @@ const routes = [
     {
         path: '/verify/',
         component: VerifyUserPage,
+    },
+    {
+        alias: ['/profile'],
+        path: '/profile/',
+        routes: [
+            {
+                component: ProfilePage,
+                path: '/me',
+            },
+            {
+                component: ProfilePage,
+                path: '/user/:id',
+            },
+        ],
     },
     {
         alias: ['/welcome', '/onboard/'],

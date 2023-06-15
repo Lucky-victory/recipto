@@ -29,7 +29,7 @@ const MyApp = () => {
         colors: {
             primary: '#4caf50',
         },
-        darkMode: 'dark',
+        darkMode: 'auto',
         popup: {
             closeByBackdropClick: false,
             backdropUnique: true,
